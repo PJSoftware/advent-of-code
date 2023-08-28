@@ -11,9 +11,11 @@ testSolution('())',-1);
 testSolution('))(',-1);
 testSolution(')))',-3);
 testSolution(')())())',-3);
+print "\n";
 
 my $input = readInput('01-input.txt');
 printSolution($input);
+findFirstEntry($input, -1);
 
 sub testSolution {
   my ($input,$expected) = @_;
@@ -22,6 +24,7 @@ sub testSolution {
     print "OK '$input' -> $expected\n";
   } else {
     print "** FAIL for '$input'; got $got, exp $expected\n";
+    exit 1;
   }
 }
 
@@ -43,9 +46,17 @@ sub printSolution {
   print "Solution for given input: ".solve($input)."\n";
 }
 
+sub findFirstEntry {
+  my ($input,$targetFloor) = @_;
+  solve($input,$targetFloor);
+}
+
 sub solve {
-  my $input = shift;
+  my ($input,$targetFloor) = @_;
+  $targetFloor = '' unless defined($targetFloor);
+
   my $floor = 0;
+  my $pos = 0;
   my $ch;
 
   while (length($input) > 0) {
@@ -53,8 +64,15 @@ sub solve {
     $input = substr($input,1);
     if ($ch eq '(') {
       $floor++;
+      $pos++;
     } elsif ($ch eq ')') {
       $floor--;
+      $pos++;
+    }
+
+    if ($targetFloor eq $floor) {
+      print "Enters level $targetFloor on position: $pos\n";
+      $targetFloor = '';
     }
   }
 
