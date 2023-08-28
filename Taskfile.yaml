@@ -7,3 +7,8 @@ tasks:
     dir: ./2015/01
     cmds:
       - perl ./01.pl
+
+  02:
+    dir: ./2015/02
+    cmds:
+      - perl ./02.pl
