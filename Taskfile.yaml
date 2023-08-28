@@ -1,0 +1,9 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  01:
+    dir: ./2015/01
+    cmds:
+      - perl ./01.pl
