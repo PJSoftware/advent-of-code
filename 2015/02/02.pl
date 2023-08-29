@@ -4,20 +4,23 @@ use strict;
 
 use List::Util qw{ min };
 
-testSolution('2x3x4',58);
-testSolution('1x1x10',43);
+testSolution('2x3x4',58,34);
+testSolution('1x1x10',43,14);
 print "\n";
 
 my @inputs = readArray('02-input.txt');
 printSolution(@inputs);
 
 sub testSolution {
-  my ($input,$expected) = @_;
-  my $got = solve($input);
-  if ($got == $expected) {
-    print "OK '$input' -> $expected\n";
+  my ($input,$paper,$ribbon) = @_;
+  my $gotPaper = solvePaper($input);
+  my $gotRibbon = solveRibbon($input);
+  if ($gotPaper == $paper && $gotRibbon == $ribbon) {
+    print "OK '$input' -> $gotPaper / $gotRibbon\n";
   } else {
-    print "** FAIL for '$input'; got $got, exp $expected\n";
+    print "** FAIL for '$input':\n";
+    print "  - Paper: got $gotPaper, exp $paper\n";
+    print "  - Ribbon: got $gotRibbon, exp $ribbon\n";
     exit 1;
   }
 }
@@ -37,15 +40,18 @@ sub readArray {
 
 sub printSolution {
   my @inputs = @_;
-  my $areaTotal = 0;
+  my $paperTotal = 0;
+  my $ribbonTotal = 0;
 
   foreach my $input (@inputs) {
-    $areaTotal += solve($input);
+    $paperTotal += solvePaper($input);
+    $ribbonTotal += solveRibbon($input);
   }
-  print "Solution for given input: $areaTotal sq ft\n";
+  print "Solution for given input: Paper = $paperTotal sq ft\n";
+  print "Solution for given input: Ribbon = $ribbonTotal ft\n";
 }
 
-sub solve {
+sub solvePaper {
   my ($input) = @_;
   my $area = 0;
   if ($input =~ m{(\d+)x(\d+)x(\d+)}) {
@@ -57,4 +63,18 @@ sub solve {
   }
 
   return $area;
+}
+
+sub solveRibbon {
+  my ($input) = @_;
+  my $len = 0;
+  if ($input =~ m{(\d+)x(\d+)x(\d+)}) {
+    my ($l,$w,$h) = ($1,$2,$3);
+    my $c1 = $l + $w;
+    my $c2 = $w + $h;
+    my $c3 = $h + $l;
+    $len = min($c1,$c2,$c3)*2 + $l*$w*$h;
+  }
+
+  return $len;
 }
