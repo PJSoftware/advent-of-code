@@ -3,9 +3,13 @@
 version: "3"
 
 tasks:
+  default:
+    cmds:
+      - task --list-all
+
   new:
     cmds:
-      - perl ./bin/gen-new-framework.pl {{.CLI_ARGS}}
+      - perl ./bin/gen-new-framework-2015.pl {{.CLI_ARGS}}
 
   01:
     dir: ./2015/01
