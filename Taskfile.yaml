@@ -3,6 +3,10 @@
 version: "3"
 
 tasks:
+  new:
+    cmds:
+      - perl ./bin/gen-new-framework.pl {{.CLI_ARGS}}
+
   01:
     dir: ./2015/01
     cmds:
@@ -12,3 +16,8 @@ tasks:
     dir: ./2015/02
     cmds:
       - perl ./02.pl
+
+  03:
+    dir: ./2015/03
+    cmds:
+      - perl ./03.pl
