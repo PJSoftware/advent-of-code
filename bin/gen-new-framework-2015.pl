@@ -2,6 +2,8 @@
 
 use strict;
 
+use File::Copy qw{ copy };
+
 my $YEAR = '2015';
 
 if (!defined $ARGV[0]) {
@@ -38,8 +40,7 @@ sub gen_md {
 
 sub gen_code {
   my $day = shift;
-  open my $FILE,'>',"$YEAR/$day/$day.pl";
-  close $FILE;
+  copy("bin/tmpl/script.pl","$YEAR/$day/$day.pl");
 }
 
 sub append_task {

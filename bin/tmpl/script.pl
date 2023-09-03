@@ -14,7 +14,7 @@ foreach my $testInput (sort keys %tests) {
   Advent::test($testInput, solve($testInput), $tests{$testInput});
 }
 
-my $input = Advent::readBlock('04-input.txt');
+my $input = Advent::readBlock('NN-input.txt');
 Advent::solution(solve($input));
 
 sub solve {

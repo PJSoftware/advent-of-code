@@ -30,3 +30,8 @@ tasks:
     dir: ./2015/04
     cmds:
       - perl ./04.pl
+
+  05:
+    dir: ./2015/05
+    cmds:
+      - perl ./05.pl
