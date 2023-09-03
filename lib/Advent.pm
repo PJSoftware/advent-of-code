@@ -28,8 +28,8 @@ sub readArray {
 
 sub test {
   my ($input, $got, $exp) = @_;
-  if ($got == $exp) {
-    print "OK '$input' => $got\n";
+  if ($got eq $exp) {
+    print "OK '$input' => $got (exp: $exp)\n";
   } else {
     print "** FAIL for '$input':\n";
     print "  - got $got, exp $exp\n";
@@ -38,8 +38,10 @@ sub test {
 }
 
 sub solution {
-  my ($solution) = @_;
-  print "Solution: $solution\n";
+  my ($solution, $id) = @_;
+  print "Solution";
+  print " ($id)" if $id;
+  print ": $solution\n";
 }
 
 1;
