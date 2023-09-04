@@ -35,7 +35,7 @@ foreach my $signal (sort keys %signalsExpected) {
 print "\n";
 
 my $target = 'a';
-my @input = Advent::readArray('07-input.txt');
+my @input = Advent::readArray('07-input-part2.txt');
 my %signal = solveFor($target,@input);
 
 Advent::solution($signal{$target});
