@@ -11,18 +11,18 @@ my $LAYOUT_Y = 1000;
 my @LIGHTS = createLights($LAYOUT_X,$LAYOUT_Y);
 
 my @testInput = (
-  'turn on 1,1 through 10,10', # 10x10 = 100 lights on 
-  'turn off 3,3 through 8,8', # 6x6 = 36; 100-36 = 64 lights on
-  'toggle 2,1 through 3,10', # 14 off, 6 on -> 56 lights on
+  'turn on 1,1 through 10,10', # 10x10 = 100 brightness
+  'turn off 3,3 through 8,8', # 6x6 = 36; 100-36 = 64 brightness
+  'toggle 2,1 through 3,10', # 20 increased by 2; 64+40 = 104 brightness
 );
 
-my @testResults = (100, 64, 56);
+my @testResults = (100, 64, 104);
 
 foreach my $test (0 .. scalar(@testInput)-1) {
   my $input = $testInput[$test];
   my $exp = $testResults[$test];
   controlLights($input);
-  my $got = countLights();
+  my $got = calculateBrightness();
   Advent::test($input, $got, $exp);
 }
 resetLights();
@@ -32,7 +32,7 @@ foreach my $instruction (@input) {
   controlLights($instruction);
 }
 
-Advent::solution(countLights());
+Advent::solution(calculateBrightness());
 
 #####
 
@@ -71,26 +71,26 @@ sub controlLights {
 
   foreach my $x ($minX..$maxX) {
     foreach my $y ($minY..$maxY) {
-      if ($cmd eq 'turn on') {
-        $LIGHTS[$x][$y] = 1;
+      if ($cmd eq 'turn on') {        # translation: increase by 1
+        $LIGHTS[$x][$y] += 1;
 
-      } elsif ($cmd eq 'turn off') {
-        $LIGHTS[$x][$y] = 0;
+      } elsif ($cmd eq 'turn off') {  # translation: decrease by 1 (min 0)
+        $LIGHTS[$x][$y] -= 1 if $LIGHTS[$x][$y] > 0;
 
-      } else {  # toggle
-        $LIGHTS[$x][$y] = 1 - $LIGHTS[$x][$y];
+      } else {                        # toggle translation: increase by 2
+        $LIGHTS[$x][$y] += 2;
 
       }
     }
   }
 }
 
-sub countLights {
+sub calculateBrightness {
   my $lightsOn = 0;
   my ($numX, $numY) = ($LAYOUT_X,$LAYOUT_Y);
   foreach my $x (0..$numX-1) {
     foreach my $y (0..$numY-1) {
-      $lightsOn++ if $LIGHTS[$x][$y];
+      $lightsOn += $LIGHTS[$x][$y];
     }
   }
   return $lightsOn;
