@@ -21,10 +21,15 @@ if (-d "$YEAR/$DAY") {
 mkdir($YEAR) unless -d $YEAR;
 mkdir("$YEAR/$DAY");
 
+print "Enter title for day $DAY puzzle:\n";
+my $title = <STDIN>;
+$title =~ s{[\r\n]*$}{};
+
 gen_input($DAY);
-gen_md($DAY);
+gen_md($DAY, $title);
 gen_code($DAY);
 append_task($DAY);
+append_entry($DAY,$title);
 
 sub gen_input {
   my $day = shift;
@@ -33,14 +38,19 @@ sub gen_input {
 }
 
 sub gen_md {
-  my $day = shift;
+  my ($day,$title) = @_;
+  my $dn = $day+0;
+
   open my $FILE,'>',"$YEAR/$day/$day.md";
+
+  print $FILE "# Day $dn: $title\n\n";
+  print $FILE "## Part 1\n";
   close $FILE;
 }
 
 sub gen_code {
   my $day = shift;
-  copy("bin/tmpl/script.pl","$YEAR/$day/$day.pl");
+  copy("bin/tmpl/$YEAR/script.pl","$YEAR/$day/$day.pl");
 }
 
 sub append_task {
@@ -48,8 +58,17 @@ sub append_task {
   open my $FILE,'>>',"Taskfile.yaml";
   print $FILE "\n";
   print $FILE "  $day:\n";
-  print $FILE "    dir: ./2015/$day\n";
+  print $FILE "    dir: ./$YEAR/$day\n";
   print $FILE "    cmds:\n";
   print $FILE "      - perl ./$day.pl\n";
+  close $FILE;
+}
+
+sub append_entry {
+  my ($day,$title) = @_;
+  my $dn = $day+0;
+
+  open my $FILE,'>>',"$YEAR/00.md";
+  print $FILE "- [Day $dn](./$day/$day.md) - $title\n";
   close $FILE;
 }

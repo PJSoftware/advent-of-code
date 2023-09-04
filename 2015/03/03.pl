@@ -13,7 +13,7 @@ my ($solution1,$solution2) = solve($input);
 print "Solution year 1 = $solution1\n";
 print "Solution year 2 = $solution2\n";
 
-sub testSolution() {
+sub testSolution {
   my ($input,$exp1,$exp2) = @_;
   my ($got1,$got2) = solve($input);
   if ($exp1 > 0) {
