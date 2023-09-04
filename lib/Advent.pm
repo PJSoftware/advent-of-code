@@ -2,6 +2,7 @@ package Advent;
 
 sub readBlock {
   my $fn = shift;
+  print "Reading block of characters: ";
   open (my $IN, '<', $fn);
   my $input = '';
   foreach my $line (<$IN>) {
@@ -10,11 +11,14 @@ sub readBlock {
   }
   close $IN;
 
+  print length($input)." characters read\n";
   return $input;
 }
 
 sub readArray {
   my $fn = shift;
+  print "Reading individual lines: ";
+
   open (my $IN, '<', $fn);
   my @input = ();
   foreach my $line (<$IN>) {
@@ -23,6 +27,7 @@ sub readArray {
   }
   close $IN;
 
+  print scalar(@input)." lines read\n";
   return @input;
 }
 
