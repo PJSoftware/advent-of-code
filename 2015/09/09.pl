@@ -43,9 +43,19 @@ Advent::test("shortest distance (AUS)", solve(@testDataAUS), $testAnswerAUS);
 print "\n";
 
 my @input = Advent::readArray('09-input.txt');
-Advent::solution(solve(@input));
+my ($locationList,$distanceDB) = importDistances(@input); 
+my @trips = generateTrips(@{$locationList});
+Advent::solution(shortestTrip(\@trips,$distanceDB),'shortest');
+Advent::solution(longestTrip(\@trips,$distanceDB),'longest');
 
 sub solve {
+  my (@input) = @_;
+  my ($locationList,$distanceDB) = importDistances(@input); 
+  my @trips = generateTrips(@{$locationList});
+  return shortestTrip(\@trips,$distanceDB);
+}
+
+sub importDistances {
   my (@input) = @_;
 
   my %location = ();
@@ -63,21 +73,33 @@ sub solve {
   }
 
   my @locations = (sort keys %location);
-  return shortestTrip(\%distances, @locations);
+  return \@locations, \%distances;
 }
 
 sub shortestTrip {
-  my ($distDB, @locations) = @_;
+  my ($tripList, $distDB) = @_;
   my $shortestTrip = -1;
 
-  my @trips = generateTrips(@locations);
-  foreach my $trip (@trips) {
+  foreach my $trip (@{$tripList}) {
     my $tripLength = calcTripLength($trip, $distDB);
     if ($shortestTrip == -1 || $tripLength < $shortestTrip) {
       $shortestTrip = $tripLength;
     }
   }
   return $shortestTrip;
+}
+
+sub longestTrip {
+  my ($tripList, $distDB) = @_;
+  my $longestTrip = -1;
+
+  foreach my $trip (@{$tripList}) {
+    my $tripLength = calcTripLength($trip, $distDB);
+    if ($tripLength > $longestTrip) {
+      $longestTrip = $tripLength;
+    }
+  }
+  return $longestTrip;
 }
 
 sub generateTrips {
