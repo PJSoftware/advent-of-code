@@ -37,7 +37,13 @@ print "\n";
 ##############################################################################
 
 my $input = Advent::readBlock('11-input.txt');
-Advent::solution(nextPW($input),$input);
+
+my $next = nextPW($input);
+Advent::solution($next,$input);
+
+$input = $next;
+$next = nextPW($input);
+Advent::solution($next,$input);
 
 sub generateRulePatterns {
   # Rule 1: abc|bcd|cde etc
