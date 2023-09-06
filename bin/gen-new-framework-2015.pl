@@ -44,7 +44,7 @@ sub gen_md {
   open my $FILE,'>',"$YEAR/$day/$day.md";
 
   print $FILE "# Day $dn: $title\n\n";
-  print $FILE "## Part 1\n";
+  print $FILE "## Part One\n";
   close $FILE;
 }
 
