@@ -10,9 +10,17 @@ my %tests = (
   'pqrstuv' => 1048970,
 );
 
+##############################################################################
+print "Tests:\n";
+my $DEBUG = 1;
+
 foreach my $testInput (sort keys %tests) {
   Advent::test($testInput, solve($testInput), $tests{$testInput});
 }
+
+$DEBUG = 0;
+print "\n";
+##############################################################################
 
 my $input = Advent::readBlock('NN-input.txt');
 Advent::solution(solve($input));
