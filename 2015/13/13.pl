@@ -40,16 +40,27 @@ my %seatingDB = ();
 foreach my $input (@inputData) {
   addToModel(\%seatingDB,$input);
 }
+addSelfToModel(\%seatingDB,"Myself",0);
 Advent::solution(maximiseHappiness(\%seatingDB));
 
 sub addToModel {
   my ($dbRef,$input) = @_;
+  my $self = 'Myself';
   if ($input =~ /^(\S+) would (lose|gain) (\d+) happiness units by sitting next to (\S+)[.]$/) {
     my ($n1,$dir,$hu,$n2) = ($1,$2,$3,$4);
     if ($dir eq 'lose') {
       $hu = -$hu;
     }
     $dbRef->{$n1}{$n2} = $hu;
+  }
+}
+
+sub addSelfToModel {
+  my ($dbRef,$self,$selfHappy) = @_;
+  foreach my $person (sort keys %{$dbRef}) {
+    next if $person eq $self;
+    $dbRef->{$person}{$self} = $selfHappy;
+    $dbRef->{$self}{$person} = $selfHappy;
   }
 }
 
