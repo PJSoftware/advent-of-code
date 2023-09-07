@@ -30,6 +30,7 @@ gen_md($DAY, $title);
 gen_code($DAY);
 append_task($DAY);
 append_entry($DAY,$title);
+system("git checkout -b day$DAY");
 
 sub gen_input {
   my $day = shift;
