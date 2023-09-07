@@ -25,25 +25,58 @@ my $testResult = 330;
 print "Tests:\n";
 my $DEBUG = 1;
 
+my %testModel = ();
 foreach my $input (@testData) {
-  addToModel($input);
+  addToModel(\%testModel,$input);
 }
-Advent::test('test_happiness',maximiseHappiness(), $testResult);
+Advent::test('test_happiness',maximiseHappiness(\%testModel), $testResult);
 
 $DEBUG = 0;
 print "\n";
 ##############################################################################
 
 my @inputData = Advent::readArray('13-input.txt');
+my %seatingDB = ();
 foreach my $input (@inputData) {
-  addToModel($input);
+  addToModel(\%seatingDB,$input);
 }
-Advent::solution(maximiseHappiness());
+Advent::solution(maximiseHappiness(\%seatingDB));
 
 sub addToModel {
-  my ($input) = @_;
+  my ($dbRef,$input) = @_;
+  if ($input =~ /^(\S+) would (lose|gain) (\d+) happiness units by sitting next to (\S+)[.]$/) {
+    my ($n1,$dir,$hu,$n2) = ($1,$2,$3,$4);
+    if ($dir eq 'lose') {
+      $hu = -$hu;
+    }
+    $dbRef->{$n1}{$n2} = $hu;
+  }
 }
 
 sub maximiseHappiness {
-  return 0;
+  my ($dbRef) = @_;
+
+  my @guestList = ();
+  foreach my $guest (sort keys %{$dbRef}) {
+    push(@guestList,$guest)
+  }
+  my @seatingArrangements = Advent::generateCombinations(@guestList);
+
+  my $maxHappiness = 0;
+  foreach my $saRef (@seatingArrangements) {
+    my @sa = @{$saRef};
+    my $pairs = scalar(@sa);
+    push(@sa,$sa[0]); # circular table; last person next to first person
+
+    my $happiness = 0;
+    foreach my $pair (0..$pairs) {
+      my $p1 = @sa[$pair];
+      my $p2 = @sa[$pair+1];
+      $happiness += $dbRef->{$p1}{$p2} + $dbRef->{$p2}{$p1};
+    }
+    if ($happiness > $maxHappiness) {
+      $maxHappiness = $happiness;
+    }
+  }
+  return $maxHappiness;
 }
