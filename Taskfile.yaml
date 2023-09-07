@@ -70,3 +70,8 @@ tasks:
     dir: ./2015/12
     cmds:
       - perl ./12.pl
+
+  13:
+    dir: ./2015/13
+    cmds:
+      - perl ./13.pl

@@ -7,7 +7,7 @@ use Advent;
 
 my @testGen = ('A','B','C');
 print "testGen -> @testGen\n";
-my @testResult = generateTrips(@testGen);
+my @testResult = Advent::generateCombinations(@testGen);
 my @testAnswer = ();
 foreach my $test (@testResult) {
   push(@testAnswer,join('',@{$test}));
@@ -44,14 +44,14 @@ print "\n";
 
 my @input = Advent::readArray('09-input.txt');
 my ($locationList,$distanceDB) = importDistances(@input); 
-my @trips = generateTrips(@{$locationList});
+my @trips = Advent::generateCombinations(@{$locationList});
 Advent::solution(shortestTrip(\@trips,$distanceDB),'shortest');
 Advent::solution(longestTrip(\@trips,$distanceDB),'longest');
 
 sub solve {
   my (@input) = @_;
   my ($locationList,$distanceDB) = importDistances(@input); 
-  my @trips = generateTrips(@{$locationList});
+  my @trips = Advent::generateCombinations(@{$locationList});
   return shortestTrip(\@trips,$distanceDB);
 }
 
@@ -102,27 +102,6 @@ sub longestTrip {
   return $longestTrip;
 }
 
-sub generateTrips {
-  my (@locations) = @_;
-  my @rv = ();
-
-  if (scalar(@locations) == 1) {
-    push(@rv,\@locations);
-    return @rv;
-  }
-
-  foreach my $loc (@locations) {
-    my @remainder = allExcept($loc,@locations);
-    my @trips = generateTrips(@remainder);
-    foreach my $trip (@trips) {
-      my @whole = ($loc);
-      push(@whole,@{$trip});
-      push(@rv,\@whole);
-    }
-  }
-  return @rv;
-}
-
 sub calcTripLength {
   my ($trip, $distDB) = @_;
 
@@ -142,13 +121,4 @@ sub getDist {
     exit 3;
   }
   return $distDB->{$loc1}{$loc2};
-}
-
-sub allExcept {
-  my ($value, @array) = @_;
-  my @rv = ();
-  foreach my $item (@array) {
-    push(@rv, $item) unless $item eq $value;
-  }
-  return @rv;
 }
