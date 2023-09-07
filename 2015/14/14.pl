@@ -21,6 +21,7 @@ foreach my $testInput (sort @tests) {
   registerReindeer(\%testHerd, $testInput);
 }
 Advent::test("test race", runRace(\%testHerd, $testRaceDuration), $testWinner);
+Advent::test("test race", calcWinner(\%testHerd, $testRaceDuration), $testWinner);
 
 $DEBUG = 0;
 print "\n";
@@ -33,7 +34,8 @@ my $raceDuration = 2503;
 foreach my $deerStats (sort @reindeer) {
   registerReindeer(\%racers, $deerStats);
 }
-Advent::solution(runRace(\%racers, $raceDuration));
+Advent::solution(calcWinner(\%racers, $raceDuration),"calculation => correct");
+Advent::solution(runRace(\%racers, $raceDuration),"simulation => WRONG!");
 
 sub registerReindeer {
   my ($dbRef, $stats) = @_;
@@ -43,8 +45,8 @@ sub registerReindeer {
     $dbRef->{$name}{flightSpeed} = $fSpeed;
     $dbRef->{$name}{flightDuration} = $fDuration;
     $dbRef->{$name}{restDuration} = $rDuration;
-    $dbRef->{$name}{state} = 'ready';
-    $dbRef->{$name}{duration} = 0;
+    $dbRef->{$name}{state} = 'flying';
+    $dbRef->{$name}{duration} = $fDuration;
     $dbRef->{$name}{distance} = 0;
   } else {
     print "Input not recognised: $stats\n";
@@ -55,13 +57,13 @@ sub registerReindeer {
 sub runRace {
   my ($dbRef, $duration) = @_;
 
+  # For some reason our simulation of the race seems to be adding an extra
+  # second to both the race and rest times -- but if I simply add "-1" in the
+  # relevant locations, the test fails. Something weird is happening.
+  #
+  # Let's try Plan B
   foreach my $second (1 .. $duration) {
     foreach my $racer (sort keys %{$dbRef}) {
-      if ($dbRef->{$racer}{state} eq 'ready') {
-        $dbRef->{$racer}{state} = 'flying';
-        $dbRef->{$racer}{duration} = $dbRef->{$racer}{flightDuration};
-      }
-
       if ($dbRef->{$racer}{state} eq 'flying') {
         if ($dbRef->{$racer}{duration} > 0) {
           $dbRef->{$racer}{duration}--;
@@ -79,6 +81,7 @@ sub runRace {
         }
       }
 
+    # print "$racer has travelled $dbRef->{$racer}{distance}km after $second seconds ($dbRef->{$racer}{state} for $dbRef->{$racer}{duration})\n" if $DEBUG;
     }
   }
   return winner($dbRef);
@@ -94,5 +97,32 @@ sub winner {
       $winner = $racer;
     }
   }
+  return "$winner => $dist";
+}
+
+sub calcWinner {
+  my ($dbRef, $length) = @_;
+  my ($winner,$dist) = ('',0);
+
+  foreach my $racer (sort keys %{$dbRef}) {
+    my $cycleDuration = $dbRef->{$racer}{flightDuration}+$dbRef->{$racer}{restDuration};
+    my $numCycles = int($length/$cycleDuration);
+    my $remainder = $length - $numCycles * $cycleDuration;
+    print "$racer has $numCycles cycles in this race, plus $remainder extra seconds\n";
+
+    if ($remainder > $dbRef->{$racer}{flightDuration}) {
+      $remainder = $dbRef->{$racer}{flightDuration};
+    }
+
+    my $distance = $numCycles * $dbRef->{$racer}{flightSpeed} * $dbRef->{$racer}{flightDuration};
+    $distance += $remainder * $dbRef->{$racer}{flightSpeed};
+    print "  They can cover a total distance of ${distance}km in $length seconds!\n";
+
+    if ($distance > $dist) {
+      $dist = $distance;
+      $winner = $racer;
+    }
+  }
+
   return "$winner => $dist";
 }
