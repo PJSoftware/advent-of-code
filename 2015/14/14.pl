@@ -14,39 +14,48 @@ my @tests = (
 print "Tests:\n";
 my $DEBUG = 1;
 
-my %testHerd = ();
+my @testSim = (
+  'Bob can fly 1 km/s for 1 seconds, but then must rest for 2 seconds.',
+);
+my $testSimDuration = 20;
+my %testBob = resetRacers(@testSim);
+my $BobAlwaysWins = calcWinner(\%testBob, $testSimDuration);
+Advent::test("test sim", runRace(\%testBob, $testSimDuration), $BobAlwaysWins);
+
+print "\n";
+
 my $testRaceDuration = 1000;
 my $testWinner = 'Comet => 1120';
-foreach my $testInput (sort @tests) {
-  registerReindeer(\%testHerd, $testInput);
-}
-Advent::test("test race (sim)", runRace(\%testHerd, $testRaceDuration), $testWinner);
+my %testHerd = resetRacers(@tests);
 Advent::test("test race (calc)", calcWinner(\%testHerd, $testRaceDuration), $testWinner);
+Advent::test("test race (sim)", runRace(\%testHerd, $testRaceDuration), $testWinner);
 
 print "\n";
 ##############################################################################
 
 my @reindeer = Advent::readArray('14-input.txt');
-my %racers = ();
 my $raceDuration = 2503;
 
 ##############################################################################
 print "Test Full Simulation:\n";
-foreach my $deerStats (sort @reindeer) {
-  registerReindeer(\%racers, $deerStats);
-}
+my %racers = resetRacers(@reindeer);
 Advent::test("test part 1 race simulation", runRace(\%racers, $raceDuration), "Rudolph => 2640");
 $DEBUG = 0;
 print "\n";
 ##############################################################################
 
-%racers = ();
-foreach my $deerStats (sort @reindeer) {
-  registerReindeer(\%racers, $deerStats);
-}
-Advent::solution(calcWinner(\%racers, $raceDuration),"calculation => correct");
-Advent::solution(runRace(\%racers, $raceDuration),"simulation => WRONG!");
+%racers = resetRacers(@reindeer);
+Advent::solution(calcWinner(\%racers, $raceDuration),"calculation");
+Advent::solution(runRace(\%racers, $raceDuration),"simulation");
 
+sub resetRacers {
+  my @stats = @_;
+  my %racers = ();
+  foreach my $stat (sort @stats) {
+    registerReindeer(\%racers, $stat);
+  }
+  return %racers;
+}
 
 sub registerReindeer {
   my ($dbRef, $stats) = @_;
@@ -57,7 +66,7 @@ sub registerReindeer {
     $dbRef->{$name}{flightDuration} = $fDuration;
     $dbRef->{$name}{restDuration} = $rDuration;
     $dbRef->{$name}{state} = 'flying';
-    $dbRef->{$name}{duration} = $fDuration;
+    $dbRef->{$name}{duration} = 0;
     $dbRef->{$name}{distance} = 0;
   } else {
     print "Input not recognised: $stats\n";
@@ -68,31 +77,25 @@ sub registerReindeer {
 sub runRace {
   my ($dbRef, $duration) = @_;
 
-  # For some reason our simulation of the race seems to be adding an extra
-  # second to both the race and rest times -- but if I simply add "-1" in the
-  # relevant locations, the test fails. Something weird is happening.
-  #
-  # Let's try Plan B
   foreach my $second (1 .. $duration) {
+    # print "After $second seconds:\n";
     foreach my $racer (sort keys %{$dbRef}) {
       if ($dbRef->{$racer}{state} eq 'flying') {
-        if ($dbRef->{$racer}{duration} > 0) {
-          $dbRef->{$racer}{duration}--;
-          $dbRef->{$racer}{distance} += $dbRef->{$racer}{flightSpeed};
-        } else {
+        $dbRef->{$racer}{distance} += $dbRef->{$racer}{flightSpeed};
+        $dbRef->{$racer}{duration}++;
+        # print "- $racer has flown for $dbRef->{$racer}{duration} seconds, and covered $dbRef->{$racer}{distance}km\n";
+        if ($dbRef->{$racer}{duration} == $dbRef->{$racer}{flightDuration}) {
           $dbRef->{$racer}{state} = 'resting';
-          $dbRef->{$racer}{duration} = $dbRef->{$racer}{restDuration};
+          $dbRef->{$racer}{duration} = 0;
         }
       } elsif ($dbRef->{$racer}{state} eq 'resting') {
-        if ($dbRef->{$racer}{duration} > 0) {
-          $dbRef->{$racer}{duration}--;
-        } else {
+        $dbRef->{$racer}{duration}++;
+        # print "- $racer has rested for $dbRef->{$racer}{duration} seconds (at $dbRef->{$racer}{distance}km)\n";
+        if ($dbRef->{$racer}{duration} == $dbRef->{$racer}{restDuration}) {
           $dbRef->{$racer}{state} = 'flying';
-          $dbRef->{$racer}{duration} = $dbRef->{$racer}{flightDuration};
+          $dbRef->{$racer}{duration} = 0;
         }
       }
-
-    # print "$racer has travelled $dbRef->{$racer}{distance}km after $second seconds ($dbRef->{$racer}{state} for $dbRef->{$racer}{duration})\n" if $DEBUG;
     }
   }
   return winner($dbRef);
