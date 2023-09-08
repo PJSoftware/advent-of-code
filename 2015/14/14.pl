@@ -20,10 +20,9 @@ my $testWinner = 'Comet => 1120';
 foreach my $testInput (sort @tests) {
   registerReindeer(\%testHerd, $testInput);
 }
-Advent::test("test race", runRace(\%testHerd, $testRaceDuration), $testWinner);
-Advent::test("test race", calcWinner(\%testHerd, $testRaceDuration), $testWinner);
+Advent::test("test race (sim)", runRace(\%testHerd, $testRaceDuration), $testWinner);
+Advent::test("test race (calc)", calcWinner(\%testHerd, $testRaceDuration), $testWinner);
 
-$DEBUG = 0;
 print "\n";
 ##############################################################################
 
@@ -31,11 +30,23 @@ my @reindeer = Advent::readArray('14-input.txt');
 my %racers = ();
 my $raceDuration = 2503;
 
+##############################################################################
+print "Test Full Simulation:\n";
+foreach my $deerStats (sort @reindeer) {
+  registerReindeer(\%racers, $deerStats);
+}
+Advent::test("test part 1 race simulation", runRace(\%racers, $raceDuration), "Rudolph => 2640");
+$DEBUG = 0;
+print "\n";
+##############################################################################
+
+%racers = ();
 foreach my $deerStats (sort @reindeer) {
   registerReindeer(\%racers, $deerStats);
 }
 Advent::solution(calcWinner(\%racers, $raceDuration),"calculation => correct");
 Advent::solution(runRace(\%racers, $raceDuration),"simulation => WRONG!");
+
 
 sub registerReindeer {
   my ($dbRef, $stats) = @_;
@@ -108,7 +119,7 @@ sub calcWinner {
     my $cycleDuration = $dbRef->{$racer}{flightDuration}+$dbRef->{$racer}{restDuration};
     my $numCycles = int($length/$cycleDuration);
     my $remainder = $length - $numCycles * $cycleDuration;
-    print "$racer has $numCycles cycles in this race, plus $remainder extra seconds\n";
+    # print "$racer has $numCycles cycles in this race, plus $remainder extra seconds\n";
 
     if ($remainder > $dbRef->{$racer}{flightDuration}) {
       $remainder = $dbRef->{$racer}{flightDuration};
@@ -116,7 +127,7 @@ sub calcWinner {
 
     my $distance = $numCycles * $dbRef->{$racer}{flightSpeed} * $dbRef->{$racer}{flightDuration};
     $distance += $remainder * $dbRef->{$racer}{flightSpeed};
-    print "  They can cover a total distance of ${distance}km in $length seconds!\n";
+    # print "  They can cover a total distance of ${distance}km in $length seconds!\n";
 
     if ($distance > $dist) {
       $dist = $distance;
