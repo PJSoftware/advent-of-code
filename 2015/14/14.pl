@@ -45,8 +45,9 @@ print "\n";
 ##############################################################################
 
 %racers = resetRacers(@reindeer);
-Advent::solution(calcWinner(\%racers, $raceDuration),"calculation");
-Advent::solution(runRace(\%racers, $raceDuration),"simulation");
+# Advent::solution(calcWinner(\%racers, $raceDuration),"calculation");
+Advent::solution(runRace(\%racers, $raceDuration),"in first place");
+Advent::solution(winnerOnPoints(\%racers),"on points");
 
 sub resetRacers {
   my @stats = @_;
@@ -68,6 +69,7 @@ sub registerReindeer {
     $dbRef->{$name}{state} = 'flying';
     $dbRef->{$name}{duration} = 0;
     $dbRef->{$name}{distance} = 0;
+    $dbRef->{$name}{leadPoints} = 0;
   } else {
     print "Input not recognised: $stats\n";
     exit 1;
@@ -97,8 +99,32 @@ sub runRace {
         }
       }
     }
+
+    foreach my $racer (inFront($dbRef)) {
+      $dbRef->{$racer}{leadPoints}++;
+    }
   }
   return winner($dbRef);
+}
+
+sub inFront {
+  my ($dbRef) = @_;
+  my $dist = 0;
+
+  foreach my $racer (sort keys %{$dbRef}) {
+    if ($dbRef->{$racer}{distance} > $dist) {
+      $dist = $dbRef->{$racer}{distance};
+    }
+  }
+
+  my @rv = ();
+  foreach my $racer (sort keys %{$dbRef}) {
+    if ($dbRef->{$racer}{distance} == $dist) {
+      push(@rv, $racer);
+    }
+  }
+
+  return @rv;
 }
 
 sub winner {
@@ -112,6 +138,19 @@ sub winner {
     }
   }
   return "$winner => $dist";
+}
+
+sub winnerOnPoints {
+  my ($dbRef) = @_;
+  my ($winner,$points) = ('',0);
+
+  foreach my $racer (sort keys %{$dbRef}) {
+    if ($dbRef->{$racer}{leadPoints} > $points) {
+      $points = $dbRef->{$racer}{leadPoints};
+      $winner = $racer;
+    }
+  }
+  return "$winner => $points (at $dbRef->{$winner}{distance}km)";
 }
 
 sub calcWinner {
