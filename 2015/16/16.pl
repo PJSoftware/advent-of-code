@@ -23,26 +23,46 @@ use Advent;
 ##############################################################################
 
 my @auntData = Advent::readArray('16-input.txt');
-my %clue = (
+my %clueEQ = (
   children => 3,
-  cats => 7,
   samoyeds => 2,
-  pomeranians => 3,
   akitas => 0,
   vizslas => 0,
-  goldfish => 5,
-  trees => 3,
   cars => 2,
   perfumes => 1,
+);
+
+my %clueLT = (
+  pomeranians => 3,
+  goldfish => 5,
+);
+
+my %clueGT = (
+  cats => 7,
+  trees => 3,
 );
 
 foreach my $aunt (@auntData) {
   if ($aunt =~ m{^Sue (\d+): (\S+): (\d+), (\S+): (\d+), (\S+): (\d+)$}) {
     my ($num,$obj1,$c1,$obj2,$c2,$obj3,$c3) = ($1,$2,$3,$4,$5,$6,$7);
-    if ($clue{$obj1} eq $c1 && $clue{$obj2} eq $c2 && $clue{$obj3} eq $c3) {
+    if (good($obj1,$c1) && good($obj2,$c2) && good($obj3,$c3)) {
       print "Aunt Sue #$num is a match! -> $aunt\n";
     }
   } else {
     print "Input not as expected: '$aunt'\n";
   }
+}
+
+sub good {
+  my ($clue, $count) = @_;
+  if (defined($clueEQ{$clue}) && $count == $clueEQ{$clue}) {
+    return 1;
+  }
+  if (defined($clueLT{$clue}) && $count < $clueLT{$clue}) {
+    return 1;
+  }
+  if (defined($clueGT{$clue}) && $count > $clueGT{$clue}) {
+    return 1;
+  }
+  return 0;
 }
