@@ -13,21 +13,24 @@ my @testIngredients = (
   'Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3',
 );
 my $testPerfectScore = 62842880;
+my $testPerfectLowCal = 57600000;
 ##############################################################################
 print "Tests:\n";
 my $DEBUG = 1;
 
-Advent::test("test batch", perfectCookies(@testIngredients), $testPerfectScore);
+Advent::test("test batch", perfectCookies(0, @testIngredients), $testPerfectScore);
+Advent::test("test batch", perfectCookies(500, @testIngredients), $testPerfectLowCal);
 
 $DEBUG = 0;
 print "\n";
 ##############################################################################
 
 my @ingredients = Advent::readArray('15-input.txt');
-Advent::solution(perfectCookies(@ingredients));
+Advent::solution(perfectCookies(0,@ingredients),"perfect");
+Advent::solution(perfectCookies(500,@ingredients),"low cal");
 
 sub perfectCookies {
-  my (@ingredientData) = @_;
+  my ($maxCalories, @ingredientData) = @_;
 
   my @ingredients = ();
   foreach my $data (@ingredientData) {
@@ -41,16 +44,23 @@ sub perfectCookies {
   my $bestRecipe = 0;
   foreach my $recipe (@allRecipes) {
     my ($c,$d,$f,$t) = (0,0,0,0);
+    my $cal = 0;
     foreach my $index (0 .. $numIngredients-1) {
       $c += $recipe->[$index] * $ingredients[$index]->capacity();
       $d += $recipe->[$index] * $ingredients[$index]->durability();
       $f += $recipe->[$index] * $ingredients[$index]->flavor();
       $t += $recipe->[$index] * $ingredients[$index]->texture();
+      $cal += $recipe->[$index] * $ingredients[$index]->calories();
       # print $recipe->[$index] . " " . $ingredients[$index]->ingredient() . ";";
     }
     my $score = $c*$d*$f*$t;
     if ($c <0 || $d < 0 || $f < 0 || $t < 0) {
       $score = 0;
+    }
+    if ($maxCalories) {
+      if ($cal != $maxCalories) {
+        $score = 0;
+      }
     }
     if ($score > $bestScore) {
       $bestScore = $score;
