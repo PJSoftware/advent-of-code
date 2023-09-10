@@ -80,3 +80,8 @@ tasks:
     dir: ./2015/14
     cmds:
       - perl ./14.pl
+
+  15:
+    dir: ./2015/15
+    cmds:
+      - perl ./15.pl
