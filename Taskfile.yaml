@@ -11,6 +11,10 @@ tasks:
     cmds:
       - perl ./bin/gen-new-framework-2015.pl {{.CLI_ARGS}}
 
+  merge-day:
+    cmds:
+      - perl ./bin/merge-back-2015.pl
+
   01:
     dir: ./2015/01
     cmds:
