@@ -80,6 +80,35 @@ sub generateCombinations {
   return @rv;
 }
 
+# Returns array of array references, where each sub-array adds up to target
+sub generateCombinationsWithTarget {
+  my ($target, @items) = @_;
+  my @rv = ();
+
+  while (my $item = shift(@items)) {
+    next if $item > $target;
+    if ($item == $target) {
+      push(@rv,wrap($item));
+    } else {
+      my @combos = generateCombinationsWithTarget($target-$item, @items);
+      foreach my $combo (@combos) {
+        my @result = ($item);
+        push(@result,@{$combo});
+        push(@rv,\@result);
+      }
+    }
+  }
+  return @rv;
+}
+
+# Wrap a scalar in an array, return array reference
+sub wrap {
+  my ($item) = @_;
+  my @rv = ($item);
+  return \@rv;
+}
+
+# Returns an array with specified value removed; expecting unique values!
 sub allExcept {
   my ($value, @array) = @_;
   my @rv = ();
