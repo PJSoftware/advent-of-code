@@ -8,7 +8,8 @@ use List::Util qw{ sum };
 
 my @testSizes = qw{ 20 15 10 5 5 };
 my $testVolume = 25;
-my $testOptions = 4;
+my $testOptCount = 4;
+my $testMinCount = 3;
 
 
 ##############################################################################
@@ -38,7 +39,9 @@ foreach my $result (@results) {
 print "Tests: (@testSizes) => $testVolume\n";
 my $DEBUG = 1;
 
-Advent::test("options", solve($testVolume, @testSizes), $testOptions);
+my @testSolution = Advent::generateCombinationsWithTarget($testVolume, @testSizes);
+Advent::test("options", scalar(@testSolution), $testOptCount);
+Advent::test("count-minimum", countMinimum(@testSolution), $testMinCount);
 
 $DEBUG = 0;
 print "\n";
@@ -46,16 +49,25 @@ print "\n";
 
 my @containers = Advent::readArray('17-input.txt');
 my $targetVolume = 150;
-Advent::solution(solve($targetVolume, @containers));
 
-sub solve {
-  my ($target, @data) = @_;
-  my @solution = Advent::generateCombinationsWithTarget($target,@data);
-  # print "Num of results = ".@solution."\n";
-  # foreach my $result (@solution) {
-  #   my $sum = sum(@{$result});
-  #   print " - sum(@{$result}) = $sum\n";
-  # }
+my @solution = Advent::generateCombinationsWithTarget($targetVolume, @containers);
+Advent::solution(scalar(@solution),"number of ways to store 150L");
+Advent::solution(countMinimum(@solution),"number of ways with minimal containers");
 
-  return scalar(@solution);
+sub countMinimum {
+  my (@options) = @_;
+
+  my $minimum = -1;
+  my $count = 0;
+  foreach my $choice (@options) {
+    my $num = scalar(@{$choice});
+    if ($minimum == -1 || $num < $minimum) {
+      $count = 1;
+      $minimum = $num;
+    } elsif ($num == $minimum) {
+      $count++;
+    }
+  }
+
+  return $count;
 }
