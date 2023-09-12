@@ -20,6 +20,8 @@ foreach my $testInput (sort keys %tests) {
 
 $DEBUG = 0;
 print "\n";
+
+exit 1;
 ##############################################################################
 
 my $input = Advent::readBlock('NN-input.txt');

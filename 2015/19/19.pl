@@ -5,7 +5,12 @@ use lib "../lib";
 
 use Advent;
 
+my $reElement = '[A-Z][a-z]?';
+my $reElementOrElectron = 'e|[A-Z][a-z]?';
+
 my @testInput = (
+  'e => H',
+  'e => O',
   'H => HO',
   'H => OH',
   'O => HH',
@@ -22,11 +27,14 @@ my $DEBUG = 1;
 my ($testStartMolecule, %testReplacements) = parseInput(@testInput);
 Advent::test("start molecule", $testStartMolecule, 'HOH');
 
-my %testOutput = calibrate($testStartMolecule, %testReplacements);
+my %testOutput = fabricate($testStartMolecule, %testReplacements);
 Advent::test("calibration", scalar(keys %testOutput), $testDistinct);
 
-%testOutput = calibrate('HOHOHO', %testReplacements);
+%testOutput = fabricate('HOHOHO', %testReplacements);
 Advent::test("calibration HOHOHO", scalar(keys %testOutput), $testDistinctHOHOHO);
+
+Advent::test("fab steps", fabricateSteps($testStartMolecule, %testReplacements), 3);
+Advent::test("fab steps HOHOHO", fabricateSteps('HOHOHO', %testReplacements), 6);
 
 $DEBUG = 0;
 print "\n";
@@ -35,8 +43,9 @@ print "\n";
 
 my @input = Advent::readArray('19-input.txt');
 my ($startMolecule, %replacements) = parseInput(@input);
-my %output = calibrate($startMolecule, %replacements);
+my %output = fabricate($startMolecule, %replacements);
 Advent::solution(scalar(keys %output),"number of unique molecules");
+Advent::solution(fabricateSteps($startMolecule, %replacements),"steps to fabricate");
 
 ##############################################################################
 
@@ -48,7 +57,7 @@ sub parseInput {
 
   foreach my $line (@input) {
     next unless $line;
-    if ($line =~ /^([A-Z][a-z]?) => ([A-za-z]+)$/) {
+    if ($line =~ /^($reElementOrElectron) => ([A-za-z]+)$/) {
       my ($src,$trg) = ($1,$2);
       $replacement{$src} = () unless $replacement{$src};
       push(@{$replacement{$src}},$trg);
@@ -60,7 +69,33 @@ sub parseInput {
   return($molecule,%replacement);
 }
 
-sub calibrate {
+sub fabricateSteps {
+  my ($targetMolecule, %repDB) = @_;
+
+  my $startMolecule = 'e';
+  my @inputOptions = ($startMolecule);
+  my $step = 0;
+  my $found = 0;
+  while (!$found) {
+    $step++;
+    print "Step $step: ";
+    my %allOutput = ();
+    foreach my $opt (@inputOptions) {
+      my %output = fabricate($opt, %repDB);
+      foreach my $mol (sort keys %output) {
+        $allOutput{$mol}++;
+        if ($mol eq $targetMolecule) {
+          print "target molecule found!\n";
+          return $step;
+        }
+      }
+    }
+    @inputOptions = (sort keys %allOutput);
+    print scalar(@inputOptions)." distinct molecules created!\n";
+  }
+}
+
+sub fabricate {
   my ($molecule, %repDB) = @_;
 
   my %output = ();
@@ -81,14 +116,14 @@ sub calibrate {
       }
     }
   }
-  print "Total $repCount replacements, ".scalar(keys %output)." distinct molecules\n";
+  # print "Total $repCount replacements, ".scalar(keys %output)." distinct molecules\n";
   return %output;
 }
 
 sub deconstruct {
   my ($molecule) = @_;
   my @structure = ();
-  while ($molecule =~ /^([A-Z][a-z]?)(.*)/) {
+  while ($molecule =~ /^($reElementOrElectron)(.*)/) {
     my $element = $1;
     $molecule = $2;
     push(@structure, $element);
