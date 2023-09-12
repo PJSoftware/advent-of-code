@@ -18,6 +18,8 @@ my @testInput = (
 );
 my $testSteps = 4;
 my $testCount = 4;
+my $testStepsStuck = 5;
+my $testCountStuck = 17;
 
 ##############################################################################
 print "Tests:\n";
@@ -26,6 +28,12 @@ my $DEBUG = 1;
 my @testGrid = convertToGrid(@testInput);
 @testGrid = animate($testSteps, @testGrid);
 Advent::test("test animation", countLive(@testGrid), $testCount);
+
+# Reset grid for second pass
+@testGrid = convertToGrid(@testInput);
+@testGrid = animateStuckCorners($testStepsStuck, @testGrid);
+Advent::test("stuck corners", countLive(@testGrid), $testCountStuck);
+
 printGrid(@testGrid);
 
 $DEBUG = 0;
@@ -38,6 +46,11 @@ my $steps = 100;
 Advent::solution(countLive(@grid),'before');
 @grid = animate($steps,@grid);
 Advent::solution(countLive(@grid),'after');
+
+# Reset grid for second pass
+@grid = convertToGrid(Advent::readArray('18-input.txt'));
+@grid = animateStuckCorners($steps,@grid);
+Advent::solution(countLive(@grid),'stuck');
 
 sub animate {
   my ($steps, @grid) = @_;
@@ -68,6 +81,44 @@ sub animate {
   return @grid;
 }
 
+sub animateStuckCorners {
+  my ($steps, @grid) = @_;
+  my $maxX = scalar(@grid)-1;
+  my $maxY = scalar(@{$grid[0]})-1;
+
+  @grid = cornersStuckOn($maxX, $maxY, @grid);
+  foreach my $step (1..$steps) {
+    my @nextState = ();
+    foreach my $x (0 .. $maxX) {
+      foreach my $y (0 .. $maxY) {
+        my $cell = $DEAD;
+        my $nc = countNeighbours($x,$y, @grid);
+        if ($grid[$x][$y] eq $LIVE) {
+          if ($nc == 2 || $nc == 3) {
+            $cell = $LIVE;
+          }
+        } else {
+          if ($nc == 3) {
+            $cell = $LIVE;
+          }
+        }
+        $nextState[$x][$y] = $cell;
+      }
+    }
+    @grid = cornersStuckOn($maxX, $maxY, @nextState);
+  }
+
+  return @grid;
+}
+
+sub cornersStuckOn {
+  my ($maxX, $maxY, @grid) = @_;
+  $grid[0][0] = $LIVE;
+  $grid[$maxX][0] = $LIVE;
+  $grid[0][$maxY] = $LIVE;
+  $grid[$maxX][$maxY] = $LIVE;
+  return @grid;
+}
 sub convertToGrid {
   my (@stringArray) = @_;
   my $maxX = scalar(@stringArray)-1;
