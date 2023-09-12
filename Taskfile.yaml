@@ -14,6 +14,7 @@ tasks:
   merge-day:
     cmds:
       - perl ./bin/merge-back-2015.pl
+      - git push
 
   01:
     dir: ./2015/01
