@@ -25,8 +25,10 @@ print "\n";
 my $input = Advent::readBlock('NN-input.txt');
 Advent::solution(solve($input));
 
+##############################################################################
+
 sub solve {
   my ($input) = @_;
 
-  return 123456;
+  return 0;
 }
