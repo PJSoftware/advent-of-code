@@ -45,6 +45,31 @@ my @input = Advent::readArray('19-input.txt');
 my ($startMolecule, %replacements) = parseInput(@input);
 my %output = fabricate($startMolecule, %replacements);
 Advent::solution(scalar(keys %output),"number of unique molecules");
+
+my @sm = deconstruct($startMolecule);
+my %elVariable = ();
+my %elFixed = ();
+
+foreach my $el (sort keys %replacements) {
+  $elVariable{$el}++;
+}
+
+foreach my $el (@sm) {
+  $elFixed{$el} = 1 unless $elVariable{$el};
+}
+
+Advent::solution(scalar(@sm),"molecule length");
+print "Fixed:";
+foreach my $el (sort keys %elFixed) {
+  print " $el";
+}
+print "\n";
+print "Variable:";
+foreach my $el (sort keys %elVariable) {
+  print " $el";
+}
+print "\n";
+
 Advent::solution(fabricateSteps($startMolecule, %replacements),"steps to fabricate");
 
 ##############################################################################
@@ -103,9 +128,23 @@ sub fabricate {
   my $numAtoms = scalar(@molStructure);
 
   my $repCount = 0;
+  my $skipNext = 0;
   foreach my $src (sort keys %repDB) {
     foreach my $trg (sort @{$repDB{$src}}) {
       foreach my $elIndex (0 .. $numAtoms-1) {
+        
+        # Shortcuts based on visual analysis of replacement data
+        if ($skipNext) {
+          $skipNext--;
+          next;
+        }
+        my $seq2 = $molStructure[$elIndex] . ($molStructure[$elIndex+1] // '');
+        if ($seq2 =~ /CRn|NRn|ORn|YF|YMg/) {
+          $skipNext++;
+          next;
+        } 
+        next if $elFixed{$molStructure[$elIndex]};
+
         if ($molStructure[$elIndex] eq $src) {
           my @dup = @molStructure;
           $dup[$elIndex] = $trg;
