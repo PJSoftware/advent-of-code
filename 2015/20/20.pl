@@ -33,8 +33,16 @@ print "\n";
 
 ##############################################################################
 
+my $LAST_PRIME = 0;
 my $input = Advent::readBlock('20-input.txt');
-Advent::solution(firstHouseToReceive($input));
+my $house = firstHouseToReceive($input);
+my $presents = presentsForHouse($house);
+
+Advent::solution($presents,"presents");
+Advent::solution($house,"first house > $input");
+# my @factors = factorsOf($house);
+# print "Factors: @factors\n";
+Advent::solution($LAST_PRIME,"last prime seen");
 
 ##############################################################################
 
@@ -65,14 +73,20 @@ sub factorsOf {
     $test++;
   }
 
-  print "Prime found: $num\n" if $PRIME;
+  $LAST_PRIME = $num if $PRIME;
   return sort keys %factors;
 }
 
 sub firstHouseToReceive {
   my ($target) = @_;
   my $house = 1;
-  while (presentsForHouse($house) < $target) {
+  $house = 269897 unless $DEBUG; # Start where we paused
+  my $maxPresents = 0;
+  while ((my $presents = presentsForHouse($house)) < $target) {
+    if ($presents > $maxPresents) {
+      $maxPresents = $presents;
+      print "Max presents found = $presents (at #$house) [last prime = $LAST_PRIME]\n";
+    }
     $house++;
   }
 
