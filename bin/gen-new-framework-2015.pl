@@ -70,6 +70,6 @@ sub append_entry {
   my $dn = $day+0;
 
   open my $FILE,'>>',"$YEAR/README.md";
-  print $FILE "- [Day $dn](./$day/$day.md) - $title\n";
+  print $FILE "- [Day $dn](./$day/README-$day.md) - $title\n";
   close $FILE;
 }
