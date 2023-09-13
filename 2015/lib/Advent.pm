@@ -5,6 +5,8 @@ package Advent;
 sub readBlock {
   my $fn = shift;
   print "Reading block of characters: ";
+  die "File '$fn' not found" unless -f $fn;
+
   open (my $IN, '<', $fn);
   my $input = '';
   foreach my $line (<$IN>) {
@@ -20,6 +22,7 @@ sub readBlock {
 sub readArray {
   my $fn = shift;
   print "Reading individual lines: ";
+  die "File '$fn' not found" unless -f $fn;
 
   open (my $IN, '<', $fn);
   my @input = ();
