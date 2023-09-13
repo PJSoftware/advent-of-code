@@ -36,6 +36,10 @@ Advent::test("calibration HOHOHO", scalar(keys %testOutput), $testDistinctHOHOHO
 Advent::test("fab steps", fabricateSteps($testStartMolecule, %testReplacements), 3);
 Advent::test("fab steps HOHOHO", fabricateSteps('HOHOHO', %testReplacements), 6);
 
+my %testDeconstruct = genDeconstructDB(%testReplacements);
+Advent::test("deconstruct steps", deconstructionSteps($testStartMolecule, %testDeconstruct), 3);
+Advent::test("deconstruct steps", deconstructionSteps('HOHOHO', %testDeconstruct), 6);
+
 $DEBUG = 0;
 print "\n";
 
@@ -70,9 +74,37 @@ foreach my $el (sort keys %elVariable) {
 }
 print "\n";
 
-Advent::solution(fabricateSteps($startMolecule, %replacements),"steps to fabricate");
+my %dcDB = genDeconstructDB(%replacements);
+Advent::solution(deconstructionSteps($startMolecule, %dcDB),"steps to deconstruct");
+# Advent::solution(fabricateSteps($startMolecule, %replacements),"steps to fabricate");
 
 ##############################################################################
+
+sub deconstructionSteps {
+  my ($molecule, %dcDB) = @_;
+
+  my $step = 0;
+  while ($molecule ne 'e') {
+    if ($dcDB{$molecule} eq 'e') {
+      return $step + 1;
+    }
+
+    my $inState = $molecule;
+    foreach my $pattern (sort keys %dcDB) {
+      next if $dcDB{$pattern} eq 'e';
+      if ($molecule =~ /$pattern/) {
+        my $src = $dcDB{$pattern};
+        $molecule =~ s{$pattern}{$src};
+        $step++;
+      }
+    }
+    if ($molecule eq $inState) {
+      print "no possible changes; stuck at #$step: '$inState'\n";
+      exit 2;
+    }
+  }
+  return $step;
+}
 
 sub parseInput {
   my (@input) = @_;
@@ -92,6 +124,22 @@ sub parseInput {
   }
 
   return($molecule,%replacement);
+}
+
+sub genDeconstructDB {
+  my (%repDB) = @_;
+  my %dcDB = ();
+  foreach my $src (sort keys %repDB) {
+    foreach my $trg (sort @{$repDB{$src}}) {
+      if ($dcDB{$trg}) {
+        print "Multiple possible sources for '$trg' ($src & $dcDB{$trg})\n";
+        exit 1;
+      } else {
+        $dcDB{$trg} = $src;
+      }
+    }
+  }
+  return %dcDB;
 }
 
 sub fabricateSteps {
