@@ -43,6 +43,7 @@ Advent::solution($house,"first house > $input");
 # my @factors = factorsOf($house);
 # print "Factors: @factors\n";
 Advent::solution($LAST_PRIME,"last prime seen");
+Advent::solution(newDelivery($input),"new approach");
 
 ##############################################################################
 
@@ -80,7 +81,7 @@ sub factorsOf {
 sub firstHouseToReceive {
   my ($target) = @_;
   my $house = 1;
-  $house = 269897 unless $DEBUG; # Start where we paused
+  $house = 776100 unless $DEBUG; # Start where we paused
   my $maxPresents = 0;
   while ((my $presents = presentsForHouse($house)) < $target) {
     if ($presents > $maxPresents) {
@@ -91,4 +92,31 @@ sub firstHouseToReceive {
   }
 
   return $house;
+}
+
+sub newDelivery {
+  my ($target) = @_;
+  my $upperHouseLimit = int($target/11 + 0.99);
+
+  my %delivered = ();
+  my $elf = 1;
+  while (!$elf <= $upperHouseLimit) {
+    foreach my $hIndex (1..50) {
+      my $house = $elf*$hIndex;
+      next if $house > $upperHouseLimit;
+      $delivered{$house} += 11*$elf;
+      if ($delivered{$house} >= $target) {
+        $upperHouseLimit = $house;
+        if ($hIndex == 1) {
+          return $house;
+        }
+      }
+    }
+    $elf++;
+    if ($elf % 10000 == 0) {
+      print "Elf $elf\n";
+    }
+  }
+
+  print "Loop exited at Elf $elf\n";
 }
