@@ -115,3 +115,8 @@ tasks:
     dir: ./2015/20
     cmds:
       - perl ./20.pl
+
+  21:
+    dir: ./2015/21
+    cmds:
+      - perl ./21.pl

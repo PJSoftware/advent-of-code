@@ -36,6 +36,28 @@ sub readArray {
   return @input;
 }
 
+sub readHash {
+  my $fn = shift;
+  print "Reading individual lines: ";
+  die "File '$fn' not found" unless -f $fn;
+
+  open (my $IN, '<', $fn);
+  my %input = ();
+  foreach my $line (<$IN>) {
+    $line =~ s{[\r\n]+$}{};
+    if ($line =~ /^(\S.*\S)\s*[:=]\s*(\S.*)/) {
+      $input{$1} = $2;
+    } else {
+      print "Line does not match pattern: '$line'\n";
+      exit 1;
+    }
+  }
+  close $IN;
+
+  print scalar(keys %input)." lines read\n";
+  return %input;
+}
+
 ##### Common code for running tests
 
 sub test {
