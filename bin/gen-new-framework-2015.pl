@@ -42,7 +42,7 @@ sub gen_md {
   my ($day,$title) = @_;
   my $dn = $day+0;
 
-  open my $FILE,'>',"$YEAR/$day/$day.md";
+  open my $FILE,'>',"$YEAR/$day/README-$day.md";
 
   print $FILE "# Day $dn: $title\n\n";
   print $FILE "## Part One\n";
@@ -69,7 +69,7 @@ sub append_entry {
   my ($day,$title) = @_;
   my $dn = $day+0;
 
-  open my $FILE,'>>',"$YEAR/00.md";
+  open my $FILE,'>>',"$YEAR/README.md";
   print $FILE "- [Day $dn](./$day/$day.md) - $title\n";
   close $FILE;
 }
