@@ -11,6 +11,7 @@ my $COMBAT_VERBOSE = 0;
 
 my %name = ();
 my %health = ();
+my %maxHealth = ();
 my %attackStrength = ();
 my %defendStrength = ();
 my %inventory = ();
@@ -27,6 +28,7 @@ sub new {
   
   $name{$self} = $name;
   $health{$self} = $hp;
+  $maxHealth{$self} = $hp;
   $attackStrength{$self} = $dmg;
   $defendStrength{$self} = $armour;
   $advantage{$self} = $adv;
@@ -37,6 +39,10 @@ sub new {
 
 ## Getter Methods
 
+sub revive {
+  my $self = shift;
+  $health{$self} = $maxHealth{$self};
+}
 sub name {
   my $self = shift;
   return $name{$self};

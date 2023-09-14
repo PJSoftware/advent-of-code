@@ -51,15 +51,25 @@ $hero->buy($EquipRUs{'Chainmail'});
 Advent::solution($hero->canDefeat($boss));
 Advent::solution($hero->inventoryCost(),"cost");
 
-optimisePurchases($hero,$boss, %EquipRUs);
-Actor::combat($hero,$boss,1);
+my %allOptions = purchaseOptions(%EquipRUs);
 
+optimisePurchases($hero,$boss, %allOptions);
+Actor::combat($hero,$boss,1);
+$hero->showInventory();
+Advent::solution($hero->inventoryCost(),"cost");
+
+# Traitor shopkeep
+$hero->revive();
+$boss->revive();
+
+deoptimisePurchases($hero,$boss, %allOptions);
+Actor::combat($hero,$boss,1);
 $hero->showInventory();
 Advent::solution($hero->inventoryCost(),"cost");
 ##############################################################################
 
-sub optimisePurchases {
-  my ($hero,$boss, %shop) = @_;
+sub purchaseOptions {
+  my (%shop) = @_;
   
   my @weapon = ();
   my @armour = ();
@@ -94,6 +104,11 @@ sub optimisePurchases {
       }
     }
   }
+  return %options;
+}
+
+sub optimisePurchases {
+  my ($hero,$boss, %options) = @_;
 
   foreach my $opt (sort { $options{$a}{cost} <=> $options{$b}{cost} } keys %options) {
     my $cost = $options{$opt}{cost};
@@ -103,6 +118,22 @@ sub optimisePurchases {
     }
 
     if ($hero->canDefeat($boss)) {
+      return;
+    }
+  }
+}
+
+sub deoptimisePurchases {
+  my ($hero,$boss, %options) = @_;
+
+  foreach my $opt (sort { $options{$b}{cost} <=> $options{$a}{cost} } keys %options) {
+    my $cost = $options{$opt}{cost};
+    $hero->dropAll();
+    foreach my $item (@{$options{$opt}{swag}}) {
+      $hero->buy($item);
+    }
+
+    if (!$hero->canDefeat($boss)) {
       return;
     }
   }
