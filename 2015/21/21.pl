@@ -51,6 +51,59 @@ $hero->buy($EquipRUs{'Chainmail'});
 Advent::solution($hero->canDefeat($boss));
 Advent::solution($hero->inventoryCost(),"cost");
 
-# Actor::combat($hero,$boss,1);
+optimisePurchases($hero,$boss, %EquipRUs);
+Actor::combat($hero,$boss,1);
 
+$hero->showInventory();
+Advent::solution($hero->inventoryCost(),"cost");
 ##############################################################################
+
+sub optimisePurchases {
+  my ($hero,$boss, %shop) = @_;
+  
+  my @weapon = ();
+  my @armour = ();
+  my @ring = ();
+
+  foreach my $item (sort keys %shop) {
+    my $equip = $shop{$item};
+    push(@weapon,$equip) if $equip->isWeapon();
+    push(@armour,$equip) if $equip->isArmour();
+    push(@ring,$equip) if $equip->isRing();
+  }
+
+  my %options = ();
+  foreach my $wIdx (0 .. $#weapon) {
+    foreach my $aIdx (-1 .. $#armour) {
+      foreach my $r1Idx (-1 .. $#ring) {
+        foreach my $r2Idx (-1 .. $r1Idx-1) {
+          my @swag = ();
+          push(@swag,$weapon[$wIdx]);
+          push(@swag,$armour[$aIdx]) if $aIdx >= 0;
+          push(@swag,$ring[$r1Idx]) if $r1Idx >= 0;
+          push(@swag,$ring[$r2Idx]) if $r2Idx >= 0;
+          my $cost = 0;
+          foreach my $item (@swag) {
+            $cost += $item->cost();
+          }
+          # Using \@swag as a key stringifies it; it is no longer a reference
+          my $key = "KEY:".\@swag;
+          $options{$key}{cost} = $cost;
+          $options{$key}{swag} = \@swag;
+        }
+      }
+    }
+  }
+
+  foreach my $opt (sort { $options{$a}{cost} <=> $options{$b}{cost} } keys %options) {
+    my $cost = $options{$opt}{cost};
+    $hero->dropAll();
+    foreach my $item (@{$options{$opt}{swag}}) {
+      $hero->buy($item);
+    }
+
+    if ($hero->canDefeat($boss)) {
+      return;
+    }
+  }
+}

@@ -70,7 +70,7 @@ sub buy {
   my $self = shift;
   my ($equip) = @_;
 
-  print "EQUIP: $equip -> ".$equip->name()."\n";
+  # print "EQUIP: $equip -> ".$equip->name()."\n";
 
   my @inv = @{$inventory{$self}};
   my ($cw,$ca,$cr) = (0,0,0);
@@ -84,7 +84,7 @@ sub buy {
     $cr++ if $owned->isRing();
   }
 
-  print "Buying ".$equip->type().": ".$equip->name."\n";
+  # print "Buying ".$equip->type().": ".$equip->name."\n";
   if ($equip->isWeapon() && $cw >= 1) {
     print "May not buy another weapon!\n";
   } elsif ($equip->isArmour() && $ca >= 1) {
@@ -94,8 +94,8 @@ sub buy {
   } else {
     push(@inv,$equip);
     @{$inventory{$self}} = @inv;
-    $dmgBonus{$self} += $equip->dmg(); print "(DMG += ".$equip->dmg().")\n";
-    $acBonus{$self} += $equip->ac(); print "(AC += ".$equip->ac().")\n";
+    $dmgBonus{$self} += $equip->dmg(); # print "(DMG += ".$equip->dmg().")\n";
+    $acBonus{$self} += $equip->ac();   # print "(AC += ".$equip->ac().")\n";
   }
 }
 
@@ -165,6 +165,15 @@ sub inventoryCost {
     $cost += $item->cost();
   }
   return $cost;
+}
+
+sub showInventory {
+  my $self = shift;
+  my @inv = @{$inventory{$self}};
+  print "Inventory:\n";
+  foreach my $item (@inv) {
+    print "- ".$item->name()."\n";
+  }
 }
 
 # Class subroutines
