@@ -2,6 +2,9 @@ package Actor;
 
 use strict;
 
+use lib ".";
+use Equipment;
+
 {
 
 my $COMBAT_VERBOSE = 0;
@@ -12,6 +15,9 @@ my %attackStrength = ();
 my %defendStrength = ();
 my %inventory = ();
 my %advantage = ();
+
+my %acBonus = ();
+my %dmgBonus = ();
 
 # Constructor
 
@@ -43,17 +49,60 @@ sub hp {
 
 sub ac {
   my $self = shift;
-  return $defendStrength{$self};
+  my $ac = $defendStrength{$self} + $acBonus{$self};
+  return $ac;
 }
 
 sub dmg {
   my $self = shift;
-  return $attackStrength{$self};
+  my $dmg = $attackStrength{$self} + $dmgBonus{$self};
+  return $dmg;
 }
 
 sub advantage {
   my $self = shift;
   return $advantage{$self};
+}
+
+## Equipment purchasing
+
+sub buy {
+  my $self = shift;
+  my ($equip) = @_;
+
+  print "EQUIP: $equip -> ".$equip->name()."\n";
+
+  my @inv = @{$inventory{$self}};
+  my ($cw,$ca,$cr) = (0,0,0);
+  foreach my $owned (@inv) {
+    if ($equip eq $owned) {
+      print "Already own '".$equip->name()."'; cannot buy another!\n";
+      return;
+    }
+    $cw++ if $owned->isWeapon();
+    $ca++ if $owned->isArmour();
+    $cr++ if $owned->isRing();
+  }
+
+  print "Buying ".$equip->type().": ".$equip->name."\n";
+  if ($equip->isWeapon() && $cw >= 1) {
+    print "May not buy another weapon!\n";
+  } elsif ($equip->isArmour() && $ca >= 1) {
+    print "May not buy another piece of armour!\n";
+  } elsif ($equip->isRing() && $cr >= 2) {
+    print "May not buy another ring!\n";
+  } else {
+    push(@inv,$equip);
+    @{$inventory{$self}} = @inv;
+    $dmgBonus{$self} += $equip->dmg(); print "(DMG += ".$equip->dmg().")\n";
+    $acBonus{$self} += $equip->ac(); print "(AC += ".$equip->ac().")\n";
+  }
+}
+
+sub dropAll {
+  my $self = shift;
+  @{$inventory{$self}} = ();
+  $dmgBonus{$self} = $acBonus{$self} = 0;
 }
 
 ## Action/combat Methods
@@ -106,6 +155,16 @@ sub takeWound {
   $health{$self} -= $damage;
   $health{$self} = 0 if $health{$self} < 0;
   print "** $name{$self} is dead!\n" if $health{$self} == 0 && $COMBAT_VERBOSE;
+}
+
+sub inventoryCost {
+  my $self = shift;
+  my @inv = @{$inventory{$self}};
+  my $cost = 0;
+  foreach my $item (@inv) {
+    $cost += $item->cost();
+  }
+  return $cost;
 }
 
 # Class subroutines

@@ -7,6 +7,7 @@ use Advent;
 
 use lib ".";
 use Actor;
+use Equipment;
 
 ##############################################################################
 print "Tests:\n";
@@ -37,10 +38,19 @@ print "\n";
 my $hero = Actor->new("Hero McStudly", 100,0,0, 1);
 my $boss = Actor->new("Boss von BadGuy", $bossData{'Hit Points'}, $bossData{'Damage'}, $bossData{'Armor'});
 
-my $amountSpent = 0;
 if ($hero->canDefeat($boss)) {
-  print "That was a cheap win! $amountSpent spent!\n";
+  print "That was a cheap win!\n";
+  Actor::combat($hero,$boss,1);
 }
-Actor::combat($hero,$boss,1);
+
+my %EquipRUs = Equipment::available();
+print "Items available: ".scalar(keys %EquipRUs)."\n";
+
+$hero->buy($EquipRUs{'Greataxe'});
+$hero->buy($EquipRUs{'Chainmail'});
+Advent::solution($hero->canDefeat($boss));
+Advent::solution($hero->inventoryCost(),"cost");
+
+# Actor::combat($hero,$boss,1);
 
 ##############################################################################
