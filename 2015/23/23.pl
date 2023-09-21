@@ -32,6 +32,9 @@ my @prog = Advent::readArray('23-input.txt');
 runProgram(@prog);
 Advent::solution(valueOfB());
 
+runProgram("inc a", @prog);
+Advent::solution(valueOfB(), "a starts at 1");
+
 ##############################################################################
 
 {
