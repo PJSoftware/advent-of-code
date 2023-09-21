@@ -23,3 +23,4 @@
 - [Day 19](./19/README-19.md) - Medicine for Rudolph
 - [Day 20](./20/README-20.md) - Infinite Elves and Infinite Houses
 - [Day 21](./21/README-21.md) - RPG Simulator 20XX
+- [Day 23](./23/README-23.md) - Opening the Turing Lock
