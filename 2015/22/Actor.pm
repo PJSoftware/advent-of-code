@@ -3,7 +3,7 @@ package Actor;
 use strict;
 
 use lib ".";
-# use Spells;
+use Spells;
 
 {
 
