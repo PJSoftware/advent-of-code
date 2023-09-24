@@ -26,3 +26,4 @@
 - [Day 22](./22/README-22.md) - Wizard Simulator 20XX
 - [Day 23](./23/README-23.md) - Opening the Turing Lock
 - [Day 24](./24/README-24.md) - It Hangs in the Balance
+- [Day 25](./25/README-25.md) - Let It Snow
