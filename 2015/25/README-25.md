@@ -35,14 +35,25 @@ So, to find the second code (which ends up in row 2, column 1), start with the p
 
 "Oh!", says the voice. "It looks like we missed a scrap from one of the manuals. Let me read it to you." You write down his numbers:
 
+```txt
 | 1 2 3 4 5 6
 ---+---------+---------+---------+---------+---------+---------+
-1 | 20151125 18749137 17289845 30943339 10071777 33511524
-2 | 31916031 21629792 16929656 7726640 15514188 4041754
-3 | 16080970 8057251 1601130 7981243 11661866 16474243
-4 | 24592653 32451966 21345942 9380097 10600672 31527494
-5 | 77061 17552253 28094349 6899651 9250759 31663883
-6 | 33071741 6796745 25397450 24659492 1534922 27995004
+1 |  20151125  18749137  17289845  30943339  10071777  33511524
+2 |  31916031  21629792  16929656   7726640  15514188   4041754
+3 |  16080970   8057251   1601130   7981243  11661866  16474243
+4 |  24592653  32451966  21345942   9380097  10600672  31527494
+5 |     77061  17552253  28094349   6899651   9250759  31663883
+6 |  33071741   6796745  25397450  24659492   1534922  27995004
+```
+
 "Now remember", the voice continues, "that's not even all of the first few numbers; for example, you're missing the one at 7,1 that would come before 6,2. But, it should be enough to let your-- oh, it's time for lunch! Bye!" The call disconnects.
 
 Santa looks nervous. Your puzzle input contains the message on the machine's console. What code do you give the machine?
+
+## Part Two
+
+The machine springs to life, then falls silent again. It beeps. "Insufficient fuel", the console reads. "Fifty stars are required before proceeding. One star is available."
+
+..."one star is available"? You check the fuel tank; sure enough, a lone star sits at the bottom, awaiting its friends. Looks like you need to provide 49 yourself.
+
+You don't have enough stars to start the machine, though. You need 2 more.
