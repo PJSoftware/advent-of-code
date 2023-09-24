@@ -11,9 +11,9 @@ my @testWeights = (1,2,3,4,5,7,8,9,10,11);
 print "Tests:\n";
 my $DEBUG = 1;
 
-Advent::test("compartment weight", compartmentWeight(\@testWeights), 20);
+Advent::test("compartment weight", compartmentWeight(\@testWeights), 15);
 my @testPassengerSpace = smallestGroup(\@testWeights);
-Advent::test("quantum entanglement", quantumEntanglement(\@testPassengerSpace), 99);
+Advent::test("quantum entanglement", quantumEntanglement(\@testPassengerSpace), 44);
 
 $DEBUG = 0;
 print "\n";
@@ -35,7 +35,7 @@ sub compartmentWeight {
   foreach my $weight (@{$weightsRef}) {
     $sum += $weight;
   }
-  return int($sum/3);
+  return int($sum/4);
 }
 
 sub smallestGroup {
