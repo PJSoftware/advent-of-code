@@ -24,7 +24,7 @@ For example, suppose the player has 10 hit points and 250 mana, and that the bos
 -- Player turn --
 - Player has 10 hit points, 0 armor, 250 mana
 - Boss has 13 hit points
-Player casts Poison.
+Player casts Poison. (173/173)
 
 -- Boss turn --
 - Player has 10 hit points, 0 armor, 77 mana
@@ -36,7 +36,7 @@ Boss attacks for 8 damage.
 - Player has 2 hit points, 0 armor, 77 mana
 - Boss has 10 hit points
 Poison deals 3 damage; its timer is now 4.
-Player casts Magic Missile, dealing 4 damage.
+Player casts Magic Missile, dealing 4 damage. (53/173+53=226)
 
 -- Boss turn --
 - Player has 2 hit points, 0 armor, 24 mana
@@ -112,5 +112,17 @@ Player casts Magic Missile, dealing 4 damage.
 - Boss has 2 hit points
 Poison deals 3 damage. This kills the boss, and the player wins.
 ```
+
+> Player casts Recharge.
+>
+> Player casts Shield, increasing armor by 7.
+>
+> Player casts Drain, dealing 2 damage, and healing 2 hit points.
+>
+> Player casts Poison.
+>
+> Player casts Magic Missile, dealing 4 damage.
+>
+> 641 total mana
 
 You start with 50 hit points and 500 mana points. The boss's actual stats are in your puzzle input. What is the least amount of mana you can spend and still win the fight? (Do not include mana recharge effects as "spending" negative mana.)

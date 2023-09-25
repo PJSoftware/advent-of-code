@@ -8,27 +8,34 @@ use Advent;
 use lib ".";
 use Actor;
 
-my %tests = (
-  'abcdef'  => 609043,
-  'pqrstuv' => 1048970,
-);
-
 ##############################################################################
 print "Tests:\n";
 my $DEBUG = 1;
 
-##                        $name, $hp, $mana, $dmg, $isWizard, $adv
-my $testWizard = Actor->new("Wizard",10,250,0,1,1);
-my $testBoss = Actor->new("Boss",13,0,8,0,0);
+## $name, $hp, $mana, $dmg, $isWizard, $adv
+my $testWizard1 = Actor->new("Rincewind",10,250,0,1,1);
+my $testBoss1 = Actor->new("Spelling",13,0,8,0,0);
 
-print "TEST Combat:\n";
-# Advent::test("will hero win",$testWizard->canDefeat($testBoss),1);
-# Advent::test("will boss win",$testBoss->canDefeat($testWizard),0);
+print "TEST Combat (1):\n";
+my $winner = Actor::combat($testWizard1, $testBoss1, 1);
+Advent::test("winner",$winner->name(),$testWizard1->name());
+Advent::test("boss hp",$testBoss1->hp(),0);
+Advent::test("hero hp",$testWizard1->hp(),2);
+Advent::test("mana spent",$testWizard1->manaSpent(), 226);
 
-my $winner = Actor::combat($testWizard, $testBoss, 1);
-Advent::test("winner",$winner->name(),$testWizard->name());
-Advent::test("boss hp",$testBoss->hp(),0);
-Advent::test("hero hp",$testWizard->hp(),2);
+#####
+
+my $testWizard2 = Actor->new("Merlin",10,250,0,1,1);
+my $testBoss2 = Actor->new("Mordred",14,0,8,0,0);
+
+print "TEST Combat (2):\n";
+$winner = Actor::combat($testWizard2, $testBoss2, 1);
+Advent::test("winner",$winner->name(),$testWizard2->name());
+Advent::test("boss hp",$testBoss2->hp(),0);
+Advent::test("hero hp",$testWizard2->hp(),2);
+Advent::test("mana spent",$testWizard2->manaSpent(), 641);
+
+##### 
 
 my %bossData = Advent::readHash('22-input.txt');
 Advent::test("data HP",$bossData{'Hit Points'},51);
@@ -40,6 +47,11 @@ print "\n";
 exit 1;
 ##############################################################################
 
-Advent::solution("enter code here");
+my $hero = Actor->new("Raistlin",50,500,0,1,1);
+my $boss = Actor->new("Caramon", $bossData{'Hit Points'},0,$bossData{'Damage'}, 0,0);
+
+$winner = Actor::combat($hero,$boss,1);
+Advent::test("wizard won",$winner->name(),$hero->name());
+Advent::solution($hero->manaSpent());
 
 ##############################################################################
