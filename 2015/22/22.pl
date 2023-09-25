@@ -19,9 +19,9 @@ my $testBoss1 = Actor->new("Spelling",13,0,8,0,0);
 print "TEST Combat (1):\n";
 my $winner = Actor::combat($testWizard1, $testBoss1, 1);
 Advent::test("winner",$winner->name(),$testWizard1->name());
+Advent::test("mana spent",$testWizard1->manaSpent(), 226);
 Advent::test("boss hp",$testBoss1->hp(),0);
 Advent::test("hero hp",$testWizard1->hp(),2);
-Advent::test("mana spent",$testWizard1->manaSpent(), 226);
 
 #####
 
@@ -31,9 +31,9 @@ my $testBoss2 = Actor->new("Mordred",14,0,8,0,0);
 print "TEST Combat (2):\n";
 $winner = Actor::combat($testWizard2, $testBoss2, 1);
 Advent::test("winner",$winner->name(),$testWizard2->name());
+Advent::test("mana spent",$testWizard2->manaSpent(), 641);
 Advent::test("boss hp",$testBoss2->hp(),0);
 Advent::test("hero hp",$testWizard2->hp(),2);
-Advent::test("mana spent",$testWizard2->manaSpent(), 641);
 
 ##### 
 

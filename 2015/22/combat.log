@@ -1,0 +1,27 @@
+Tests:
+TEST Combat (1):
+Combat: Turn 1
+----
+Rincewind randomly casts Poison on Spelling
+ - Rincewind spends 173 mana (and now has 77 left)
+
+Combat: Turn 2
+ - Spelling takes 3 damage (and has 10 left)
+----
+Spelling attacks Rincewind for 8 damage
+ - Rincewind takes 8 damage (and has 2 left)
+
+Combat: Turn 3
+ - Spelling takes 3 damage (and has 7 left)
+----
+Rincewind randomly casts Magic Missile on Spelling
+ - Rincewind spends 53 mana (and now has 24 left)
+ - Spelling takes 4 damage (and has 3 left)
+
+Combat: Turn 4
+ - Spelling takes 3 damage (and has 0 left)
+** Spelling is dead!
+----
+OK 'winner' => Rincewind (exp: Rincewind)
+** FAIL for 'mana spent':
+  - got 0, exp 226
