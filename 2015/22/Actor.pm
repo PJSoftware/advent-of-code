@@ -69,49 +69,59 @@ sub learnSpells {
 
 sub takeWound {
   my $self = shift;
-  my ($damage) = @_;
+  my ($damage,$reason) = @_;
   $damage = 0 if $damage < 0;
   return unless $damage;
   $health{$self} -= $damage;
   $health{$self} = 0 if $health{$self} < 0;
-  print " - $name{$self} takes $damage damage (and has $health{$self} left)\n";
+  print " - $name{$self} takes $damage damage (and has $health{$self} left)";
+  print " {* $reason *}" if $reason;
+  print "\n";
   print "** $name{$self} is dead!\n" if $health{$self} == 0 && $COMBAT_VERBOSE;
 }
 
 sub heal {
   my $self = shift;
-  my ($healBy) = @_;
+  my ($healBy,$reason) = @_;
   return unless $healBy;
   $health{$self} += $healBy;
   $health{$self} = $maxHealth{$self} if $health{$self} > $maxHealth{$self};
-  print " - $name{$self} is healed for $healBy damage (and now has $health{$self})\n";
+  print " - $name{$self} is healed for $healBy damage (and now has $health{$self})";
+  print " {* $reason *}" if $reason;
+  print "\n";
 }
 
 sub spendMana {
   my $self = shift;
-  my $mana = shift;
+  my ($mana,$reason) = @_;
   $mana{$self} -= $mana;
-  print " - $name{$self} spends $mana mana (and now has $mana{$self} left)\n";
+  print " - $name{$self} spends $mana mana (and now has $mana{$self} left)";
+  print " {* $reason *}" if $reason;
+  print "\n";
   if ($mana{$self} < 0) {
     print "** $name{$self} is unexpectedly dead, drained of Mana!\n";
     exit 20;
   }
-  $manaSpent{$self} +- $mana;
+  $manaSpent{$self} += $mana;
 }
 
 sub gainMana {
   my $self = shift;
-  my $mana = shift;
+  my ($mana,$reason) = @_;
   return unless $mana;
   $mana{$self} += $mana;
-  print " - $name{$self} gains $mana mana (and now has $mana{$self})\n";
+  print " - $name{$self} gains $mana mana (and now has $mana{$self})";
+  print " {* $reason *}" if $reason;
+  print "\n";
 }
 
 sub magicalArmour {
   my $self = shift;
-  my $newAC = shift;
+  my ($newAC,$reason) = @_;
   if ($newAC != $magicDefense{$self}) {
-    print " - $name{$self} now has magical armour of $newAC\n";
+    print " - $name{$self} now has magical armour of $newAC";
+    print " {* $reason *}" if $reason;
+    print "\n";
   }
   $magicDefense{$self} = $newAC;
 }

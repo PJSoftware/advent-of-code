@@ -16,7 +16,7 @@ my %attackPerTurn = ();
 my %healPerTurn = ();
 my %rechargePerTurn = ();
 my %armourBonus = ();
-my %timeRemaining = ();
+my %turnsRemaining = ();
 my %onSelf = ();
 
 my %caster = ();
@@ -37,7 +37,7 @@ sub new {
   $armourBonus{$self} = $shield;
   $onSelf{$self} = $onSelf;
 
-  $timeRemaining{$self} = 0;
+  $turnsRemaining{$self} = 0;
 
   return $self;
 }
@@ -55,34 +55,37 @@ sub cast {
   my ($caster,$target) = @_;
   $caster{$self} = $caster;
   $target{$self} = $target;
-  $caster{$self}->spendMana($self->cost());
+  $self->caster()->spendMana($self->cost());
   
   if ($duration{$self} == 0) {
     $self->applyEffects(1);
     return 0;
   } else {
-    $timeRemaining{$self} = $duration{$self};
+    $turnsRemaining{$self} = $duration{$self};
     return 1;
   }
 }
+
+sub caster { my $self = shift; return $caster{$self}; }
+sub target { my $self = shift; return $target{$self}; }
 
 sub applyEffects {
   my $self = shift;
   my $isImmediate = shift // 0;
 
-  $target{$self}->takeWound($self->attackPerTurn());
-  $caster{$self}->heal($self->healPerTurn());
-  $caster{$self}->gainMana($self->rechargePerTurn());
-  $caster{$self}->magicalArmour($self->armourBonus()) if $self->armourBonus();
+  $self->target()->takeWound($self->attackPerTurn(),$self->name());
+  $self->caster()->heal($self->healPerTurn(),$self->name());
+  $self->caster()->gainMana($self->rechargePerTurn(),$self->name());
+  $self->caster()->magicalArmour($self->armourBonus(),$self->name()) if $self->armourBonus();
 
   return 0 if $isImmediate;
   
-  $timeRemaining{$self}--;
-  if ($timeRemaining{$self} == 0 && $self->armourBonus() > 0) {
-    $caster{$self}->magicalArmour(0);
+  $turnsRemaining{$self}--;
+  if ($turnsRemaining{$self} == 0 && $self->armourBonus() > 0) {
+    $self->caster()->magicalArmour(0);
   }
 
-  return ($timeRemaining{$self} > 0);
+  return ($turnsRemaining{$self} > 0);
 }
 
 ## spell attributes
