@@ -60,11 +60,15 @@ sub learnSpells {
   %{$spellsActive{$self}} = ();
   %{$spellsAvailable{$self}} = ();
 
-  $spellsAvailable{$self}{MagicMissile} = Spells->MagicMissile();
-  $spellsAvailable{$self}{Drain}        = Spells->Drain();
-  $spellsAvailable{$self}{Shield}       = Spells->Shield();
-  $spellsAvailable{$self}{Poison}       = Spells->Poison();
-  $spellsAvailable{$self}{Recharge}     = Spells->Recharge();
+  foreach my $spell (
+    Spells->MagicMissile(),
+    Spells->Drain(),
+    Spells->Shield(),
+    Spells->Poison(),
+    Spells->Recharge(),
+  ) {
+    $spellsAvailable{$self}{$spell->name()} = $spell;
+  }
 }
 
 sub takeWound {
@@ -178,22 +182,44 @@ sub manaSpent {
 
 ## Action/combat Methods
 
-sub castRandomSpell {
+sub spellsAvailable {
   my $self = shift;
   my %spellsHash = %{$spellsAvailable{$self}};
   my @spellKeys = (keys %spellsHash);
-  my $randSpell = int(rand(scalar(@spellKeys)));
-  my $spellKey = $spellKeys[$randSpell];
-  my $spell = $spellsAvailable{$self}{$spellKey};
-  print "$name{$self} randomly casts ".$spell->name();
+  
+  my @spells = ();
+  foreach my $key (@spellKeys) {
+    push(@spells,$spellsAvailable{$self}{$key});
+  }
+
+  return @spells;
+}
+
+sub randomSpell {
+  my $self = shift;
+  my @spells = $self->spellsAvailable();
+  my $randSpell = int(rand(scalar(@spells)));
+  return $spells[$randSpell];
+}
+
+sub castSpell {
+  my $self = shift;
+  my ($spell) = @_;
+  print "$name{$self} casts ".$spell->name();
   print " on ".$enemy{$self}->name() unless $spell->onSelf();
   print "\n";
 
   my $hasEffect = $spell->cast($self,$enemy{$self});
   if ($hasEffect) {
-    delete($spellsAvailable{$self}{$spellKey});
-    $spellsActive{$self}{$spellKey} = $spell;
+    delete($spellsAvailable{$self}{$spell->name()});
+    $spellsActive{$self}{$spell->name()} = $spell;
   }
+}
+
+sub castRandomSpell {
+  my $self = shift;
+  my $spell = $self->randomSpell();
+  $self->castSpell($spell);
 }
 
 sub activateSpellEffects {
@@ -207,12 +233,20 @@ sub activateSpellEffects {
   }
 }
 
+sub analyseSituation {
+  my $self = shift;
+  return $self->randomSpell();
+}
+
 sub attack {
   my $self = shift;
   my ($target) = @_;
 
   if ($isWizard{$self}) { # Wizard analyses situation and casts spell
-    $self->castRandomSpell();
+    # $self->castRandomSpell();
+    my $nextSpell = $self->analyseSituation();
+    $self->castSpell($nextSpell);
+
   } else {  # Fighter attacks with weapon
     my $damage = $self->damagePerRound($target);
     print "$name{$self} attacks ".$target->name()." for $damage damage\n" if $COMBAT_VERBOSE;
