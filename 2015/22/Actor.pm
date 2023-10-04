@@ -47,6 +47,18 @@ sub new {
   return $self;
 }
 
+sub copy {
+  my $self = shift;
+  return Actor->new(
+    $self->name(),
+    $self->hp(),
+    $self->mana(),
+    $self->dmg(),
+    $isWizard{$self},
+    $advantage{$self}
+  );
+}
+
 ## Setter Methods
 
 sub setEnemy {
@@ -266,6 +278,15 @@ sub damagePerRound {
 # Class subroutines
 
 sub combat {
+  my ($player1, $player2, $verbose) = @_;
+  $COMBAT_VERBOSE = $verbose // 0;
+
+  my $maxManaSpend = 5000;
+  my @possibleCombats = ();
+
+}
+
+sub combatOld {
   my ($player1, $player2, $verbose) = @_;
   $COMBAT_VERBOSE = $verbose // 0;
 
