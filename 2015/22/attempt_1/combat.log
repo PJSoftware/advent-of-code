@@ -1,0 +1,46 @@
+Tests:
+TEST Combat (1):
+Combat: Turn 1
+----
+Rincewind casts Poison on Spelling
+ - Rincewind spends 173 mana (and now has 77 left)
+
+Combat: Turn 2
+ - Spelling takes 3 damage (and has 10 left) {* Poison *}
+----
+Spelling attacks Rincewind for 8 damage
+ - Rincewind takes 8 damage (and has 2 left)
+
+Combat: Turn 3
+ - Spelling takes 3 damage (and has 7 left) {* Poison *}
+----
+Rincewind casts Magic Missile on Spelling
+ - Rincewind spends 53 mana (and now has 24 left)
+ - Spelling takes 4 damage (and has 3 left) {* Magic Missile *}
+
+Combat: Turn 4
+ - Spelling takes 3 damage (and has 0 left) {* Poison *}
+** Spelling is dead!
+----
+OK 'winner' => Rincewind (exp: Rincewind)
+OK 'mana spent' => 226 (exp: 226)
+OK 'boss hp' => 0 (exp: 0)
+OK 'hero hp' => 2 (exp: 2)
+TEST Combat (2):
+Combat: Turn 1
+----
+Merlin casts Poison on Mordred
+ - Merlin spends 173 mana (and now has 77 left)
+
+Combat: Turn 2
+ - Mordred takes 3 damage (and has 11 left) {* Poison *}
+----
+Mordred attacks Merlin for 8 damage
+ - Merlin takes 8 damage (and has 2 left)
+
+Combat: Turn 3
+ - Mordred takes 3 damage (and has 8 left) {* Poison *}
+----
+Merlin casts Shield
+ - Merlin spends 113 mana (and now has -36 left)
+** Merlin is unexpectedly dead, drained of Mana!

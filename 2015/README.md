@@ -23,5 +23,6 @@
 - [Day 19](./19/README-19.md) - Medicine for Rudolph
 - [Day 20](./20/README-20.md) - Infinite Elves and Infinite Houses
 - [Day 21](./21/README-21.md) - RPG Simulator 20XX
+- [Day 22](./22/README-22.md) - Wizard Simulator 20XX
 - [Day 23](./23/README-23.md) - Opening the Turing Lock
 - [Day 24](./24/README-24.md) - It Hangs in the Balance

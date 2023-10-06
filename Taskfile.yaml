@@ -121,6 +121,15 @@ tasks:
     cmds:
       - perl ./21.pl
 
+  22:
+    dir: ./2015/22
+    cmds:
+      - perl ./22.pl
+  22-log:
+    dir: ./2015/22
+    cmds:
+      - perl ./22.pl > ./combat.log
+
   23:
     dir: ./2015/23
     cmds:
