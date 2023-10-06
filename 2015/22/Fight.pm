@@ -21,6 +21,8 @@ my %heroAC = ();
 my %heroMana = ();
 my %heroManaSpent = ();
 
+my %isHard = ();
+
 my %bossHP = ();
 my %bossMax = ();
 my %bossDmg = ();
@@ -56,6 +58,7 @@ sub new {
   }
   
   $pass{$self} = 0;
+  $isHard{$self} = 0;
   return $self;
 }
 
@@ -77,15 +80,25 @@ sub addBoss {
   $bossDmg{$self} = $dmg;
 }
 
+sub setDifficultyHard {
+  my $self = shift;
+  $isHard{$self} = 1;
+}
+
 sub bestFight {
   my $self = shift;
   my @options = ();
+
+  # Start Player Turn
+  $heroHP{$self}-- if $isHard{$self};
+  return if $heroHP{$self} <= 0;
 
   $self->triggerSpellEffects();
   foreach my $spellID ($self->canCast()) {
     my $option = $self->child();
     $option->cast($spellID);
 
+    # Start Boss Turn
     $option->triggerSpellEffects();
     $option->bossAttack();
     push(@options,$option) if $option->isOngoing();
@@ -120,6 +133,8 @@ sub child {
   $bossHP{$child} = $bossHP{$self};
   $bossMax{$child} = $bossMax{$self};
   $bossDmg{$child} = $bossDmg{$self};
+
+  $isHard{$child} = $isHard{$self};
 
   $pass{$child} = $pass{$self}+1;
 
@@ -218,6 +233,7 @@ sub status {
   print "At Pass $pass{$self}: ";
   print "Hero HP: $heroHP{$self}/$heroMax{$self}; ";
   print "Boss HP: $bossHP{$self}/$bossMax{$self}; ";
+  print " **HARD**" if $isHard{$self};
   print "\n";
   print "Optimal mana cost => $optimalFight\n";
   foreach my $spell (@optimalSpells) {

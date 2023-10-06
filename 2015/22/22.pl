@@ -34,8 +34,15 @@ print "\n";
 
 ##############################################################################
 
-my $combat = Fight->new();
-$combat->addHero(50,500);
-$combat->addBoss(51,9); # Hard coded values from input
-$combat->bestFight();
-Advent::solution($combat->optimalFight());
+my $combatEasy = Fight->new();
+$combatEasy->addHero(50,500);
+$combatEasy->addBoss(51,9); # Hard coded values from input
+$combatEasy->bestFight();
+Advent::solution($combatEasy->optimalFight());
+
+my $combatHard = Fight->new();
+$combatHard->addHero(50,500);
+$combatHard->addBoss(51,9); # Hard coded values from input
+$combatHard->setDifficultyHard();
+$combatHard->bestFight();
+Advent::solution($combatHard->optimalFight());
