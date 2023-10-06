@@ -4,7 +4,7 @@ use strict;
 
 use File::Copy qw{ copy };
 
-my $YEAR = '2015';
+my $YEAR = '2016';
 
 if (!defined $ARGV[0]) {
   print "No advent day specified!\n";

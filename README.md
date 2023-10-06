@@ -7,3 +7,4 @@ I have also decided to attempt each year's puzzles in a different programming la
 Be warned that the solution to each day's puzzle will be in my commit message -- although I believe each person's input data is probably randomised in most cases, so my correct solution may not work for anyone else.
 
 - [Advent of Code: 2015](https://adventofcode.com/2015) / [My Solutions](./2015/README.md) / Perl
+- [Advent of Code: 2016](https://adventofcode.com/2016) / [My Solutions](./2016/README.md) / Golang
