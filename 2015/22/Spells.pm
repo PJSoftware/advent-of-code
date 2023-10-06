@@ -41,28 +41,10 @@ sub new {
 
 sub MagicMissile  { return Spells->new('Magic Missile',  53, 0, 4, 0, 0, 0, 0); }
 sub Drain         { return Spells->new('Drain',          73, 0, 2, 2, 0, 0, 0); }
+
 sub Shield        { return Spells->new('Shield',        113, 6, 0, 0, 0, 7, 1); }
 sub Poison        { return Spells->new('Poison',        173, 6, 3, 0, 0, 0, 0); }
 sub Recharge      { return Spells->new('Recharge',      229, 5, 0, 0, 101, 0, 1); }
-
-sub applyEffects {
-  my $self = shift;
-  my $isImmediate = shift // 0;
-
-  $self->target()->takeWound($self->attackPerTurn(),$self->name());
-  $self->caster()->heal($self->healPerTurn(),$self->name());
-  $self->caster()->gainMana($self->rechargePerTurn(),$self->name());
-  $self->caster()->magicalArmour($self->armourBonus(),$self->name()) if $self->armourBonus();
-
-  return 0 if $isImmediate;
-  
-  $turnsRemaining{$self}--;
-  if ($turnsRemaining{$self} == 0 && $self->armourBonus() > 0) {
-    $self->caster()->magicalArmour(0);
-  }
-
-  return ($turnsRemaining{$self} > 0);
-}
 
 ## spell attributes
 
