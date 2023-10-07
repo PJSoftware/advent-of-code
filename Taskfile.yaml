@@ -15,3 +15,7 @@ tasks:
     cmds:
       - perl ./bin/merge-back-2016.pl
       - git push
+
+  01:
+    cmds:
+      - go run ./2016/01
