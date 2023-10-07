@@ -51,7 +51,7 @@ sub gen_md {
 
 sub gen_code {
   my $day = shift;
-  copy("bin/tmpl/$YEAR/script.pl","$YEAR/$day/$day.pl");
+  copy("bin/tmpl/$YEAR/script.go","$YEAR/$day/$day.go");
 }
 
 sub append_task {
@@ -59,9 +59,8 @@ sub append_task {
   open my $FILE,'>>',"Taskfile.yaml";
   print $FILE "\n";
   print $FILE "  $day:\n";
-  print $FILE "    dir: ./$YEAR/$day\n";
   print $FILE "    cmds:\n";
-  print $FILE "      - perl ./$day.pl\n";
+  print $FILE "      - go run ./2016/$day\n";
   close $FILE;
 }
 
