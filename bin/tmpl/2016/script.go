@@ -14,7 +14,7 @@ func main() {
   TestSampleData("sample2","input2",2)
   BailOnFail()
 
-  input := advent.ReadString("01-input.txt")
+  input := advent.InputString("NN")
   fmt.Printf("Solution: %d\n",Solve(input))
 }
 
