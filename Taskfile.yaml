@@ -19,3 +19,7 @@ tasks:
   01:
     cmds:
       - go run ./2016/01
+
+  02:
+    cmds:
+      - go run ./2016/02
