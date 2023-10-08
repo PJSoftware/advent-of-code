@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"reflect"
+	"strings"
 )
 
 func inputFile(num string) string {
@@ -22,7 +24,9 @@ func InputString(num string) string {
 	return string(b)
 }
 
-// InputString reads the contents of the input file line by line, and returns it as a slice of strings
+// InputString reads the contents of the input file line by line, and returns it
+// as a slice of strings. By default, all leading and trailing space is removed,
+// as are empty lines.
 func InputStrings(num string) []string {
 	var slice []string
 	fn := inputFile(num)
@@ -34,12 +38,39 @@ func InputStrings(num string) []string {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		slice = append(slice, scanner.Text())
+		txt := scanner.Text()
+		txt = strings.TrimSpace(txt)
+		if txt != "" {
+			slice = append(slice, txt)
+		}
 	}
 
 	if err := scanner.Err(); err != nil {
-			log.Fatalf("error reading '%s': %v", fn, err)
+		log.Fatalf("error reading '%s': %v", fn, err)
 	}
 	
 	return slice
+}
+
+// Testing functions
+
+var testsFailed int
+
+func Test(testName string, exp any, got any) {
+	if reflect.TypeOf(exp) != reflect.TypeOf(got) {
+		log.Fatalf("exp '%v' vs got '%v'; not the same type! (%s vs %s)",exp,got,reflect.TypeOf(exp),reflect.TypeOf(got))
+	}
+  if got == exp {
+    fmt.Printf("OK -- '%s' passed\n", testName);
+  } else {
+    fmt.Printf("FAIL -- '%s' failed;\n  - exp '%v';\n  - got '%v'\n", testName, exp, got)
+    testsFailed++
+  }
+}
+
+func BailOnFail() {
+  if testsFailed > 0 {
+    log.Fatalf("Sample Data Tests: %d failed", testsFailed)
+  }
+  fmt.Println()
 }
