@@ -10,6 +10,10 @@ import (
 )
 
 type triangle struct {
+  side1 int
+  side2 int
+  side3 int
+
   sideA int
   sideB int
   sideH int
@@ -34,9 +38,9 @@ func main() {
   testTri := testTriangles[0]
   advent.Test("read by row: tri 1",501,testTri.sideH)
   
-  // testTriangles = parseTrianglesByColumn(testData)
-  // testTri = testTriangles[0]
-  // advent.Test("read by row: tri 1",103,testTri.sideH)
+  testTriangles = parseTrianglesByColumn(testData)
+  testTri = testTriangles[0]
+  advent.Test("read by col: tri 1",103,testTri.sideH)
 
   advent.BailOnFail()
 
@@ -44,8 +48,12 @@ func main() {
 
   input := advent.InputStrings("03")
   triangles := parseTriangles(input)
-  badTri := countValidTriangles(triangles)
-  fmt.Printf("Solution: %d\n",badTri)
+  goodTri := countValidTriangles(triangles)
+  fmt.Printf("Solution by row: %d\n",goodTri)
+  
+  triangles = parseTrianglesByColumn(input)
+  goodTri = countValidTriangles(triangles)
+  fmt.Printf("Solution by col: %d\n",goodTri)
 }
 
 // Solution code
@@ -63,10 +71,24 @@ func parseTriangles(input []string) []triangle {
   return rv
 }
 
-// func parseTrianglesByColumn(input []string) []triangle {
-//   triByRow := parseTriangles(input)
-//   return triByRow
-// }
+func parseTrianglesByColumn(input []string) []triangle {
+  triByRow := parseTriangles(input)
+  var rv []triangle
+
+  i := 0
+  for i < len(triByRow) {
+    tri1 := triByRow[i+0]
+    tri2 := triByRow[i+1]
+    tri3 := triByRow[i+2]
+    i += 3
+
+    rv = append(rv, *newTriangle(tri1.side1, tri2.side1, tri3.side1))
+    rv = append(rv, *newTriangle(tri1.side2, tri2.side2, tri3.side2))
+    rv = append(rv, *newTriangle(tri1.side3, tri2.side3, tri3.side3))
+  }
+
+  return rv
+}
 
 func isValid(tri *triangle) bool {
   return tri.sideH < (tri.sideA + tri.sideB)
@@ -83,6 +105,15 @@ func countValidTriangles(input []triangle) int {
   return count
 }
 
+func newTriangle(s1, s2, s3 int) *triangle {
+  tri := &triangle{}
+  tri.side1 = s1
+  tri.side2 = s2
+  tri.side3 = s3
+  tri.sortSides()
+  return tri
+}
+
 func newTriangleByString(triDef string) *triangle {
   tri := &triangle{}
 
@@ -90,27 +121,30 @@ func newTriangleByString(triDef string) *triangle {
   triDef = space.ReplaceAllString(triDef, " ")
 
   lenStr := strings.Split(triDef, " ")
-  len1, _ := strconv.Atoi(lenStr[0])
-  len2, _ := strconv.Atoi(lenStr[1])
-  len3, _ := strconv.Atoi(lenStr[2])
+  tri.side1, _ = strconv.Atoi(lenStr[0])
+  tri.side2, _ = strconv.Atoi(lenStr[1])
+  tri.side3, _ = strconv.Atoi(lenStr[2])
   
-  if len1 == 0 || len2 == 0 || len3 == 0 {
+  if tri.side1 == 0 || tri.side2 == 0 || tri.side3 == 0 {
     return nil
   }
   
-  tri.sideH = len1
-  if (len2 > tri.sideH) {
-    tri.sideA = tri.sideH
-    tri.sideH = len2
-  } else {
-    tri.sideA = len2
-  }
-  if (len3 > tri.sideH) {
-    tri.sideB = tri.sideH
-    tri.sideH = len3
-  } else {
-    tri.sideB = len3
-  }
-
+  tri.sortSides()
   return tri
+}
+
+func (tri *triangle) sortSides() {
+  tri.sideH = tri.side1
+  if (tri.side2 > tri.sideH) {
+    tri.sideA = tri.sideH
+    tri.sideH = tri.side2
+  } else {
+    tri.sideA = tri.side2
+  }
+  if (tri.side3 > tri.sideH) {
+    tri.sideB = tri.sideH
+    tri.sideH = tri.side3
+  } else {
+    tri.sideB = tri.side3
+  }
 }
