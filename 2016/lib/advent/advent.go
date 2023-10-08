@@ -61,7 +61,7 @@ func Test(testName string, exp any, got any) {
 		log.Fatalf("exp '%v' vs got '%v'; not the same type! (%s vs %s)",exp,got,reflect.TypeOf(exp),reflect.TypeOf(got))
 	}
   if got == exp {
-    fmt.Printf("OK -- '%s' passed\n", testName);
+    fmt.Printf("OK -- '%s' => %v / passed\n", testName, got);
   } else {
     fmt.Printf("FAIL -- '%s' failed;\n  - exp '%v';\n  - got '%v'\n", testName, exp, got)
     testsFailed++
