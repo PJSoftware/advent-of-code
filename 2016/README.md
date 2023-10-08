@@ -3,3 +3,4 @@
 [link](https://adventofcode.com/2016)
 
 - [Day 1](./01/README-01.md) - No Time for a Taxicab
+- [Day 2](./02/README-02.md) - Bathroom Security
