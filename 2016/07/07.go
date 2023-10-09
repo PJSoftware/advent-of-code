@@ -12,6 +12,7 @@ func main() {
   testData := map[string]bool{
     "abba[mnop]qrst": true,
     "abcd[bddb]xyyx": false,
+    "abcd[bdcdb]xyyx": true,
     "aaaa[qwer]tyui": false,
     "ioxxoj[asdfgh]zxcvbn": true,
   }
@@ -61,7 +62,7 @@ func FindABBA(text string) (bool,bool) {
   abba := false
   inHN := false
 
-  for i := 0; i < len(text) - 4; i++ {
+  for i := 0; i < len(text) - 3; i++ {
     if text[i] == '[' {
       inHN = true
     } else if text[i] == ']' {
