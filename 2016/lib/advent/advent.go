@@ -10,7 +10,8 @@ import (
 )
 
 func inputFile(num string) string {
-	return fmt.Sprintf("C:/_dev/advent-of-code/2016/%s/%s-input.txt",num,num)
+	pwd := os.Getenv("PWD")
+	return fmt.Sprintf("%s/2016/%s/%s-input.txt",pwd,num,num)
 }
 
 // InputString reads the contents of the input file as a single string
