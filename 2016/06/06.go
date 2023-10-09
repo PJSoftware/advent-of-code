@@ -29,24 +29,37 @@ func main() {
   }
 
   fmt.Print("Starting Tests:\n\n")
-  advent.Test("sample", "easter", Solve(testData))
+  advent.Test("repetition", "easter", SolveRC(testData))
+  advent.Test("modified", "advent", SolveMRC(testData))
   advent.BailOnFail()
   fmt.Print("All tests passed!\n\n");
   
   // Solution
   
   input := advent.InputStrings("06")
-  fmt.Printf("Solution: %s\n",Solve(input))
+  fmt.Printf("Solution (rep): %s\n",SolveRC(input))
+  fmt.Printf("Solution (mod): %s\n",SolveMRC(input))
 }
 
 // Solution code
 
-func Solve(input []string) string {
+func SolveRC(input []string) string {
   input = transpose(input)
   message := ""
 
   for _, text := range(input) {
     message += mostFrequent(text)
+  }
+
+  return message
+}
+
+func SolveMRC(input []string) string {
+  input = transpose(input)
+  message := ""
+
+  for _, text := range(input) {
+    message += leastFrequent(text)
   }
 
   return message
@@ -76,6 +89,24 @@ func mostFrequent(text string) string {
       mf = r
     }
   }
+  return string(mf)
+}
+
+func leastFrequent(text string) string {
+  rf := countRuneFrequency(text)
+  lf := len(text)+1
+  var mf rune
+  for r, f := range(rf) {
+    if f == 0 {
+      continue
+    }
+
+    if f < lf {
+      lf = f
+      mf = r
+    }
+  }
+  // fmt.Printf("Least frequent in '%s' => %c\n",text,mf)
   return string(mf)
 }
 
