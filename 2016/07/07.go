@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"regexp"
 
 	"github.com/pjsoftware/advent-of-code/2016/lib/advent"
 )
@@ -50,21 +49,29 @@ func NewIPV7(ip string) *ipv7 {
 }
 
 func (ip *ipv7) SupportsTLS() bool {
-  abba := regexp.MustCompile(`([a-z])([a-z])\2\1`)
-  ABBA := abba.FindStringSubmatch(ip.addr)
-  hasABBA := len(ABBA) > 0 && ABBA[1] != ABBA[2]
-  if !hasABBA {
-    fmt.Printf("%s - No ABBA found\n",ip.addr)
+  abba, inHN := FindABBA(ip.addr)
+  if inHN {
     return false
   }
 
-  abbaHyperNet := regexp.MustCompile(`\[[^]]*([a-z])([a-z])\2\1.*\]`)
-  ABBAhn := abbaHyperNet.FindStringSubmatch(ip.addr)
-  hasABBAhn := len(ABBAhn) > 0 && ABBAhn[1] != ABBAhn[2]
-  if hasABBAhn {
-    fmt.Printf("%s - ABBA in HyperNet\n",ip.addr)
-    return false
-  }  
+  return abba
+}
 
-  return true
+func FindABBA(text string) (bool,bool) {
+  abba := false
+  inHN := false
+
+  for i := 0; i < len(text) - 4; i++ {
+    if text[i] == '[' {
+      inHN = true
+    } else if text[i] == ']' {
+      inHN = false
+    } else if text[i] == text[i+3] && text[i+1] == text[i+2] && text[i] != text[i+1] {
+      abba = true
+      if inHN {
+        return abba, inHN
+      }
+    }
+  }
+  return abba, inHN
 }
