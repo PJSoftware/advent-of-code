@@ -35,3 +35,7 @@ tasks:
   05:
     cmds:
       - go run ./2016/05
+
+  06:
+    cmds:
+      - go run ./2016/06
