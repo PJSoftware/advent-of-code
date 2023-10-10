@@ -6,6 +6,7 @@ tasks:
   default:
     cmds:
       - task --list-all
+      - echo $PWD
 
   new:
     cmds:
@@ -39,3 +40,7 @@ tasks:
   06:
     cmds:
       - go run ./2016/06
+
+  07:
+    cmds:
+      - go run ./2016/07

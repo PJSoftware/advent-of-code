@@ -8,3 +8,4 @@
 - [Day 4](./04/README-04.md) - Security Through Obscurity
 - [Day 5](./05/README-05.md) - How About a Nice Game of Chess?
 - [Day 6](./06/README-06.md) - Signals and Noise
+- [Day 7](./07/README-07.md) - Internet Protocol Version 7
