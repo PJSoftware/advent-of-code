@@ -44,3 +44,7 @@ tasks:
   07:
     cmds:
       - go run ./2016/07
+
+  08:
+    cmds:
+      - go run ./2016/08
