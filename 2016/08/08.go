@@ -61,7 +61,6 @@ func NewDisplay(x, y int) *Display {
 }
 
 func (d *Display) Interpret(cmd string) {
-  fmt.Printf("%s\n",cmd)
   reRect := regexp.MustCompile(`rect (\d+)x(\d+)`)
   match := reRect.FindStringSubmatch(cmd)
   if match != nil {
