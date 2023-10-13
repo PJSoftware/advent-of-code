@@ -57,6 +57,16 @@ func main() {
   factory.start()
 
   fmt.Printf("Solution: %d\n",factory.botSought())
+
+  result := 1
+  for id, bin := range(factory.binBank) {
+    if id <= 2 {
+      fmt.Printf("Bin #%d: %v\n", id, *bin)
+      binContents := *bin
+      result *= int(binContents[0])
+    }
+  }
+  fmt.Printf("Solution 2: %d\n", result)
 }
 
 // Solution code
