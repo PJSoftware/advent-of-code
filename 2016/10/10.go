@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"regexp"
+	"strconv"
 
 	"github.com/pjsoftware/advent-of-code/2016/lib/advent"
 )
@@ -24,6 +26,9 @@ type factory struct {
   sought int
 }
 
+var reInput = regexp.MustCompile(`value (\d+) goes to bot (\d+)`)
+var reChoose = regexp.MustCompile(`bot (\d+) gives low to (bot|output) (\d+) and high to (bot|output) (\d+)`)
+
 func main() {
   // Tests
 
@@ -38,8 +43,7 @@ func main() {
     "value 2 goes to bot 2",
   }
 
-  testFactory := newFactory(testInstructions)
-  testFactory.identifyBot(5,2)
+  testFactory := newFactory(testInstructions,5,2)
   testFactory.start()
   advent.Test("bot sought", 2, testFactory.botSought())
   advent.BailOnFail()
@@ -49,8 +53,7 @@ func main() {
   // Solution
   
   input := advent.InputStrings("10")
-  factory := newFactory(input)
-  factory.identifyBot(61,17)
+  factory := newFactory(input,61,17)
   factory.start()
 
   fmt.Printf("Solution: %d\n",factory.botSought())
@@ -58,16 +61,58 @@ func main() {
 
 // Solution code
 
-func newFactory(instructions []string) *factory {
+func newFactory(instructions []string, c1,c2 chipValue) *factory {
   f := &factory{}
   f.botArmy = make(bots)
   f.binBank = make(bins)
-  f.idBot = addBot(0)
+  f.idBot = newBot(0)
+  f.idBot.giveChip(c1)
+  f.idBot.giveChip(c2)
   f.sought = 0
+  
+  for _, cmd := range(instructions) {
+    if reInput.MatchString(cmd) {
+      match := reInput.FindStringSubmatch(cmd)
+      v1, _ := strconv.Atoi(match[1])
+      bID, _ := strconv.Atoi(match[2])
+      fmt.Printf("Give Chip #%d to bot %d\n", v1, bID)
+      f.addBot(bID).giveChip(chipValue(v1))
+      f.checkTarget(bID)
+
+    } else if reChoose.MatchString(cmd) {
+      match := reChoose.FindStringSubmatch(cmd)
+      bID, _ := strconv.Atoi(match[1])
+      f.addBot(bID).program(cmd)
+    
+    } else {
+      fmt.Printf("Unrecognised command: %s\n", cmd)
+
+    }
+  }
   return f
 }
 
-func addBot(id int) *bot {
+func (f *factory) addBot(id int) *bot {
+  if _, ok := f.botArmy[id]; !ok {
+    f.botArmy[id] = newBot(id)
+  }
+  return f.botArmy[id]
+}
+
+func (f *factory) addBin(id int) *bin {
+  if _, ok := f.binBank[id]; !ok {
+    f.binBank[id] = newBin()
+  }
+  return f.binBank[id]
+}
+
+func (f *factory) checkTarget(id int) {
+  if f.botArmy[id].chipHigh == f.idBot.chipHigh && f.botArmy[id].chipLow == f.idBot.chipLow {
+    f.sought = id
+  }
+}
+
+func newBot(id int) *bot {
   b := &bot{}
   b.id = id
   b.full = false
@@ -75,6 +120,15 @@ func addBot(id int) *bot {
   b.chipLow = 0
   b.instructions = ""
   return b
+}
+
+func newBin() *bin {
+  b := &bin{}
+  return b
+}
+
+func (b *bin) deposit(val chipValue) {
+  *b = append(*b, val)
 }
 
 func (b *bot) giveChip(val chipValue) {
@@ -96,7 +150,58 @@ func (b *bot) giveChip(val chipValue) {
   b.full = b.chipLow != 0
 }
 
-func (f *factory) identifyBot(v1, v2 chipValue) {
-  f.idBot.giveChip(v1)
-  f.idBot.giveChip(v2)
+func (b *bot) program(cmd string) {
+  b.instructions = cmd
+}
+
+func (f *factory) start() {
+  for {
+    count := 0
+
+    for _, b := range(f.botArmy) {
+      if !b.full {
+        continue
+      }
+
+      count++
+      if reChoose.MatchString(b.instructions) {
+        match := reChoose.FindStringSubmatch(b.instructions)
+        objL := match[2]
+        idL, _ := strconv.Atoi(match[3])
+        objH := match[4]
+        idH, _ := strconv.Atoi(match[5])
+        
+        if objL == "bot" {
+          f.addBot(idL).giveChip(b.chipLow)
+          f.checkTarget(idL)
+          fmt.Printf("Bot %d gives chip #%v to bot %d\n", b.id, b.chipLow, idL)
+        } else {
+          f.addBin(idL).deposit(b.chipLow)
+          fmt.Printf("Bot %d places chip #%v in bin %d\n", b.id, b.chipLow, idL)
+        }
+
+        if objH == "bot" {
+          f.addBot(idH).giveChip(b.chipHigh)
+          f.checkTarget(idH)
+          fmt.Printf("Bot %d gives chip #%v to bot %d\n", b.id, b.chipHigh, idH)
+        } else {
+          f.addBin(idL).deposit(b.chipHigh)
+          fmt.Printf("Bot %d places chip #%v in bin %d\n", b.id, b.chipHigh, idH)
+        }
+
+        b.chipLow = 0
+        b.chipHigh = 0
+        b.full = false
+      }
+    }
+
+    if count == 0 {
+      return
+    }
+  }
+
+}
+
+func (f *factory) botSought() int {
+  return f.sought
 }
