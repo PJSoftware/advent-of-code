@@ -6,6 +6,11 @@ const (
 	NoElement Element = iota
 	Hydrogen
 	Lithium
+	Strontium
+	Plutonium
+	Thulium
+	Ruthenium
+	Curium
 )
 
 type EquipType int

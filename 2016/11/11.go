@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/pjsoftware/advent-of-code/2016/lib/advent"
 )
@@ -43,10 +44,21 @@ func main() {
   advent.BailOnFail()
 
   fmt.Print("All tests passed!\n\n");
+  os.Exit(1)
   
   // Solution
 
   layout := NewLayout()
+  layout.AddToFloor(Floor1, NewEquip(Strontium,Generator))
+  layout.AddToFloor(Floor1, NewEquip(Strontium,Microchip))
+  layout.AddToFloor(Floor1, NewEquip(Plutonium,Generator))
+  layout.AddToFloor(Floor1, NewEquip(Plutonium,Microchip))
+  layout.AddToFloor(Floor2, NewEquip(Thulium,Generator))
+  layout.AddToFloor(Floor3, NewEquip(Thulium,Microchip))
+  layout.AddToFloor(Floor2, NewEquip(Ruthenium,Generator))
+  layout.AddToFloor(Floor2, NewEquip(Ruthenium,Microchip))
+  layout.AddToFloor(Floor2, NewEquip(Curium,Generator))
+  layout.AddToFloor(Floor2, NewEquip(Curium,Microchip))
   fmt.Printf("Solution: %d\n",layout.MovesRequired())
 }
 
@@ -78,48 +90,6 @@ func (l *Layout) AddToFloor(floor Floor, eq *Equip) {
 }
 
 func (l *Layout) MovesRequired() int {
-  for l.Incomplete() {
-    dir := l.LoadElevator()
-    l.MoveElevator(dir)
-  }
-  return l.ElevatorMoves
+  return 1
 }
 
-func (l *Layout) LoadElevator() Direction {
-  dir := Up
-  count := 0
-  for _, eq := range(l.Equipment) {
-    if eq.OnFloor != l.ElevatorOnFloor {
-      continue
-    }
-    count++
-  }
-
-
-
-  return dir
-}
-
-func (l *Layout) MoveElevator(dir Direction) {
-
-}
-
-func (l *Layout) Incomplete() bool {
-  for _, eq := range(l.Equipment) {
-    if eq.OnFloor != l.MaxFloor {
-      return true
-    }
-  }
-  return false
-}
-
-func (l *Layout) FindMatch(eq1 *Equip) *Equip {
-  etMatch := EquipType(1-eq1.Type)
-
-  for _, eq2 := range(l.Equipment) {
-    if eq2.Element == eq1.Element && eq2.Type == etMatch {
-      return eq2
-    }
-  }
-  return nil
-}
