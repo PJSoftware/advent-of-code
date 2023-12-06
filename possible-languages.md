@@ -13,3 +13,4 @@
 - [ ] Haskell
 - [ ] Lua
 - [ ] Crystal
+- [ ] Odin
