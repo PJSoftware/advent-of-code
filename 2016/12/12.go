@@ -30,7 +30,12 @@ func main() {
   
   input := advent.InputStrings("12")
   fmt.Print("Running assembunny code:\n")
-  fmt.Printf("Solution: %d\n",RunAndReturnA(input))
+  fmt.Printf("Solution Part 1: %d\n",RunAndReturnA(input))
+
+  input2 := []string{}
+  input2 = append(input2, "cpy 1 c")
+  input2 = append(input2, input...)
+  fmt.Printf("Solution Part 2: %d\n",RunAndReturnA(input2))
 }
 
 // Solution code
