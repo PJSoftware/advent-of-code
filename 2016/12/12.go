@@ -37,6 +37,29 @@ func main() {
 
 type Register map[string]int
 
+// func Translated() int {
+//   a := 1  // 1
+//   b := 1  // 2
+//   d := 26 // 3
+//   // jnz c 2 is a nop
+//   // jnz 1 5 is a nop << NO it is not
+//   c := 7  // 6
+//   for c > 0 { // 9
+//     d++ // 7
+//     c-- // 8
+//   }
+//   for d > 0 { 16
+//     a = c // 10
+//     for b > 0 { // 13
+//       a++ // 11
+//       b-- // 12
+//     }
+//     c = b // 14
+//     d-- // 15
+//   }
+//   c = 19 
+
+// }
 func RunAndReturnA(code []string) int {
   reg := make(Register)
   reg["a"] = 0
@@ -71,8 +94,16 @@ func RunAndReturnA(code []string) int {
       index++
 
     case "jnz":
-      if reg[instruction[2]] != 0 {
+      val := 0
+      if isNumeric(instruction[2]) {
+        x, _ := strconv.ParseInt(instruction[2], 10, 32)
+        val = int(x)
+      } else {
+        val = reg[instruction[2]]
+      }
+      if val != 0 {
         y, _ := strconv.ParseInt(instruction[3], 10, 32)
+        // fmt.Printf("# %d: **Reg %s != 0 (%d) so JMP by %d (%d,%d,%d,%d)\n", index, instruction[2], reg[instruction[2]], y, reg["a"], reg["b"], reg["c"], reg["d"])
         index += int(y)
       } else {
         index++
