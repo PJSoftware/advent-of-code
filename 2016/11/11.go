@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/pjsoftware/advent-of-code/2016/lib/advent"
 )
@@ -37,7 +36,6 @@ func main() {
   advent.BailOnFail()
 
   fmt.Print("All tests passed!\n\n");
-  os.Exit(1)
 
   // Solution
 
@@ -128,6 +126,7 @@ func (l *Layout) MovesRequired() int {
       return -1
     }
 
+    fmt.Printf("At move %d there are %d possible layouts\n", moves, len(allPossibleLayouts))
     for _, layout := range(allPossibleLayouts) {
       if layout.IsFinal() {
         return layout.ElevatorMoves
