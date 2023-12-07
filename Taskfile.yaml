@@ -60,3 +60,7 @@ tasks:
   11:
     cmds:
       - go run ./2016/11
+
+  12:
+    cmds:
+      - go run ./2016/12
