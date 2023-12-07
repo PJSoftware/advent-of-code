@@ -10,6 +10,8 @@ const (
 	Thulium
 	Ruthenium
 	Curium
+	Elerium
+	Dilithium
 )
 
 type EquipType int
@@ -37,26 +39,30 @@ func (eq *Equip) Name() string {
 
 	switch eq.Element {
 	case Hydrogen:
-		name = "hydrogen"
+		name = "h"
 	case Lithium:
-		name = "lithium"
+		name = "l"
 	case Strontium:
-		name = "strontium"
+		name = "s"
 	case Plutonium:
-		name = "plutonium"
+		name = "p"
 	case Thulium:
-		name = "thulium"
+		name = "t"
 	case Ruthenium:
-		name = "ruthenium"
+		name = "r"
 	case Curium:
-		name = "curium"
+		name = "c"
+	case Elerium:
+		name = "e"
+	case Dilithium:
+		name = "d"
 	}
 
 	switch eq.Type {
 	case Generator:
-		name += " generator"
+		name += "g"
 	case Microchip:
-		name += "-compatible microchip"
+		name += "m"
 	}
 
 	return name

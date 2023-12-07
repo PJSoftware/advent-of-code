@@ -50,7 +50,13 @@ func main() {
   layout.AddToFloor(Floor2, NewEquip(Ruthenium,Microchip))
   layout.AddToFloor(Floor2, NewEquip(Curium,Generator))
   layout.AddToFloor(Floor2, NewEquip(Curium,Microchip))
-  fmt.Printf("Solution: %d\n",layout.MovesRequired())
+  fmt.Printf("Part 1 Solution: %d\n",layout.MovesRequired())
+  
+  layout.AddToFloor(Floor1, NewEquip(Elerium,Generator))
+  layout.AddToFloor(Floor1, NewEquip(Elerium,Microchip))
+  layout.AddToFloor(Floor1, NewEquip(Dilithium,Generator))
+  layout.AddToFloor(Floor1, NewEquip(Dilithium,Microchip))
+  fmt.Printf("Part 2 Solution: %d\n",layout.MovesRequired())
 }
 
 // Solution code
@@ -101,9 +107,9 @@ func (m *Move) Describe() string {
 }
 
 func (l *Layout) Describe() string {
-  desc := fmt.Sprintf("LAYOUT:%d",l.ElevatorOnFloor)
+  desc := fmt.Sprintf("L:%d",l.ElevatorOnFloor)
   for _, eq := range(l.Equipment) {
-    desc += fmt.Sprintf(":%s(%d)", eq.Name(), eq.OnFloor)
+    desc += fmt.Sprintf(":%s/%d", eq.Name(), eq.OnFloor)
   }
   return desc
 }
@@ -134,17 +140,22 @@ func (l *Layout) MovesRequired() int {
     }
 
     for _, layout := range(allPossibleLayouts) {
-      if !layoutSeen[layout.Describe()] && layout.IsValid() {
-        layoutSeen[layout.Describe()] = true
-        moves := layout.PossibleMoves()
-        for _, move := range(moves) {
-          nextLayouts = append(nextLayouts, layout.Apply(move))
+      moves := layout.PossibleMoves()
+      for _, move := range(moves) {
+        nl := layout.Apply(move)
+        if nl != nil {
+          nextLayouts = append(nextLayouts, nl)
         }
       }
     }
 
     allPossibleLayouts = nil
-    allPossibleLayouts = append(allPossibleLayouts, nextLayouts...)
+    for _, layout := range(nextLayouts) {
+      if !layoutSeen[layout.Describe()] {
+        allPossibleLayouts = append(allPossibleLayouts, layout)
+      }
+      layoutSeen[layout.Describe()] = true
+    }
     moves++
   }
 
@@ -206,7 +217,8 @@ func (l *Layout) Apply(move *Move) *Layout {
     nl.AddToFloor(floor, NewEquip(eq.Element,eq.Type))
   }
 
-  return nl
+  if nl.IsValid() { return nl }
+  return nil
 }
 
 func (l *Layout) PossibleMoves() []*Move {
