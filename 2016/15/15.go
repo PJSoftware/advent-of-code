@@ -32,7 +32,11 @@ func main() {
 
 	input := advent.InputStrings("15")
 	discs := Parse(input)
-	fmt.Printf("Solution: %d\n", Solve(discs))
+	fmt.Printf("Solution (Part 1): %d\n", Solve(discs))
+
+	discs2 := Parse(input)
+	discs2 = append(discs2, &Disc{7, 11, 0})
+	fmt.Printf("Solution (Part 2): %d\n", Solve(discs2))
 }
 
 // Solution code
