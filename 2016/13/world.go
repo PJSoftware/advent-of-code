@@ -18,6 +18,8 @@ type World struct {
 	Target *Node
 	Seed   int
 
+	NodesWithinMax map[string]bool
+
 	Nodes      map[string]*Node
 	Walls      map[string]bool
 	Unexplored map[string]bool
@@ -30,6 +32,7 @@ func NewWorld(srcX, srcY, trgX, trgY, seed int) *World {
 	w.Nodes = make(map[string]*Node)
 	w.Walls = make(map[string]bool)
 	w.Unexplored = make(map[string]bool)
+	w.NodesWithinMax = make(map[string]bool)
 
 	if !w.isNode(srcX, srcY) {
 		log.Fatalf("Error: Source (%d,%d) is not actually a valid node!",srcX, srcY)

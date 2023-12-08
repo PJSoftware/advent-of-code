@@ -24,14 +24,15 @@ func main() {
 	fmt.Print("Starting Tests:\n\n")
 	testWorld := NewWorld(1, 1, 7, 4, 10)
 
-	advent.Test("Test Maze Solution", 11, testWorld.MazeSolver())
+	advent.Test("Test Maze Solution", 11, testWorld.MazeSolver(0))
 	advent.BailOnFail()
 	fmt.Print("All tests passed!\n\n")
 
 	// Solution
 
 	world := NewWorld(1, 1, 31, 39, 1358)
-	fmt.Printf("Solution: %d\n", world.MazeSolver())
+	fmt.Printf("Solution: %d\n", world.MazeSolver(50))
+	fmt.Printf("Part 2: %d nodes within 50 steps\n", len(world.NodesWithinMax))
 }
 
 // Solution code
@@ -42,13 +43,19 @@ func main() {
 // are N/S/E/W (or Up/Down/Left/Right) Incorporating the generator into the
 // solver (with the added assumption that our start and end points are empty
 // space) allows us to only generate the nodes we need to solve the puzzle.
-func (w *World) MazeSolver() int {
+func (w *World) MazeSolver(maxDist int) int {
 	node := w.NearestUnexploredNode()
 	for node != nil {
 		fmt.Printf("Nearest Unexplored: (%s) -> %d\n", node.Key(), node.Dist)
+		
+		if node.Dist <= maxDist {
+			w.NodesWithinMax[node.Key()] = true
+		}
+
 		if node.Dist == RBN {
 			log.Fatalf("Unexpectedly returned target node with distance not determined!")
 		}
+		
 		if node.X == w.Target.X && node.Y == w.Target.Y {
 			return node.Dist
 		}
