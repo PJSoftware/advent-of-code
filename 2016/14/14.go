@@ -14,15 +14,19 @@ func main() {
 
   fmt.Print("Starting Tests:\n\n")
 
+  stretchFactor := 2016
+
   testSalt := "abc"
-  advent.Test("64th OTP key index", 22728, Solve(testSalt))
+  advent.Test("64th OTP key index", 22728, Solve(testSalt, 0))
+  advent.Test("64th OTP stretched key index", 22551, Solve(testSalt, stretchFactor))
   advent.BailOnFail()
   fmt.Print("All tests passed!\n\n");
 
   // Solution
   
   salt := advent.InputString("14")
-  fmt.Printf("Index of 64th OTP key: %d\n",Solve(salt))
+  fmt.Printf("Index of 64th OTP key: %d\n",Solve(salt, 0))
+  fmt.Printf("Index of 64th OTP key (stretched): %d\n",Solve(salt, stretchFactor))
 }
 
 // Solution code
@@ -31,25 +35,27 @@ type SolverData struct {
   salt string
   hash map[int]string
   keys []int
+  sf int
 }
 
-func NewSolver(salt string) *SolverData {
+func NewSolver(salt string, sf int) *SolverData {
   s := &SolverData{}
   s.hash = make(map[int]string)
   s.keys = make([]int, 0)
   s.salt = salt
+  s.sf = sf
   return s
 }
 
-func Solve(salt string) int {
-  s := NewSolver(salt)
+func Solve(salt string, sf int) int {
+  s := NewSolver(salt, sf)
 
   index := 0
   for len(s.keys) < 64 {
     hash := s.GenHash(index)
     if s.isKey(hash, index) {
       s.keys = append(s.keys, index)
-      fmt.Printf("Key found at index=%d: %s\n", index, hash)
+      // fmt.Printf("Key found at index=%d: %s\n", index, hash)
     }
     index++
   }
@@ -91,7 +97,14 @@ func (s *SolverData) GenHash(index int) string {
   txt := fmt.Sprintf("%s%d", s.salt, index)
   hashBytes := md5.Sum([]byte(txt))
   hash := hex.EncodeToString(hashBytes[:])
-  s.hash[index] = hash
 
+  if s.sf > 0 {
+    for si := 0; si < s.sf; si++ {
+      hashBytes = md5.Sum([]byte(hash))
+      hash = hex.EncodeToString(hashBytes[:])
+    }
+  }
+
+  s.hash[index] = hash
   return hash
 }
