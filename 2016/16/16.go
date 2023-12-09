@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/pjsoftware/advent-of-code/2016/lib/advent"
 )
@@ -46,11 +47,51 @@ func main() {
 // Solution code
 
 func DragonCurve(a string, minLen int) string {
-	return a
+	for {
+		b := flipBits(reverse(a))
+		dc := a + "0" + b
+		if minLen == 0 {
+			return dc
+		}
+		if len(dc) >= minLen {
+			return dc[:minLen]
+		}
+		a = dc
+	}
+}
+
+func flipBits(a string) string {
+	b := strings.ReplaceAll(a, "0", "x")
+	b = strings.ReplaceAll(b, "1", "0")
+	b = strings.ReplaceAll(b, "x", "1")
+	return b
+}
+
+func reverse(s string) string {
+	runes := []rune(s)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
+	return string(runes)
 }
 
 func Checksum(a string) string {
-	return "x"
+	if len(a)%2 != 0 {
+		return a
+	}
+
+	rv := ""
+	for len(a) > 0 {
+		pair := a[:2]
+		a = a[2:]
+		if pair == "00" || pair == "11" {
+			rv += "1"
+		} else {
+			rv += "0"
+		}
+	}
+
+	return Checksum(rv)
 }
 
 func Solve(input string, minLength int) string {
