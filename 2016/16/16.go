@@ -2,10 +2,15 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/pjsoftware/advent-of-code/2016/lib/advent"
 )
+
+var csLookup = make(map[string]string)
+
+const CacheStringLength = 256
 
 func main() {
 	// Tests
@@ -22,6 +27,9 @@ func main() {
 	}
 
 	checksumTests := make(map[string]string)
+	checksumTests["110010110100"] = "100"
+	checksumTests["0011010110101101"] = "0"
+	checksumTests["0000000000000000"] = "1"
 	checksumTests["110010110100"] = "100"
 	for testInputCS, testExpCS := range checksumTests {
 		advent.Test("checksum", testExpCS, Checksum(testInputCS))
@@ -40,14 +48,19 @@ func main() {
 	// Solution
 
 	input := advent.InputString("16")
-	length := 272
-	fmt.Printf("Solution: %s\n", Solve(input, length))
+	len1 := 272
+	len2 := 35651584
+	fmt.Printf("Solution: %s\n", Solve(input, len1))
+	fmt.Printf("Solution: %s\n", Solve(input, len2))
+	fmt.Printf("> Maximum cached %d-byte checksums: %d\n", CacheStringLength, len(csLookup))
 }
 
 // Solution code
 
 func DragonCurve(a string, minLen int) string {
+	n := 0
 	for {
+		n++
 		b := flipBits(reverse(a))
 		dc := a + "0" + b
 		if minLen == 0 {
@@ -75,23 +88,55 @@ func reverse(s string) string {
 	return string(runes)
 }
 
-func Checksum(a string) string {
-	if len(a)%2 != 0 {
-		return a
-	}
+func Checksum(s string) string {
+	for {
+		if len(s) < 1024 {
+			return CalcChecksum(s)
+		}
 
-	rv := ""
-	for len(a) > 0 {
-		pair := a[:2]
-		a = a[2:]
-		if pair == "00" || pair == "11" {
-			rv += "1"
+		if len(s)%CacheStringLength == 0 {
+			rv := ""
+			for idx := 0; idx < len(s); idx += CacheStringLength {
+				rv += CalcChecksum(s[idx : idx+CacheStringLength])
+			}
+			s = rv
 		} else {
-			rv += "0"
+			log.Fatalf("Well I'm all out of ideas")
 		}
 	}
+}
 
-	return Checksum(rv)
+func CalcChecksum(a string) string {
+	csCache := false
+	csKey := ""
+	if len(a) == CacheStringLength {
+		if cs, ok := csLookup[a]; ok {
+			return cs
+		}
+		csCache = true
+		csKey = a
+	}
+
+	for {
+		if len(a)%2 != 0 {
+			if csCache {
+				csLookup[csKey] = a
+				fmt.Printf("Caching %s -> %s\n", csKey, a)
+			}
+			return a
+		}
+
+		rv := ""
+		for idx := 0; idx < len(a); idx += 2 {
+			if a[idx:idx+1] == a[idx+1:idx+2] {
+				rv += "1"
+			} else {
+				rv += "0"
+			}
+		}
+
+		a = rv
+	}
 }
 
 func Solve(input string, minLength int) string {

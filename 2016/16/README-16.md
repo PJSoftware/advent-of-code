@@ -49,3 +49,36 @@ Combining all of these steps together, suppose you want to fill a disk of length
 - In this example, the correct checksum would therefore be 01100.
 
 The first disk you have to fill has length 272. Using the initial state in your puzzle input, what is the correct checksum?
+
+## Part Two
+
+The second disk you have to fill has length 35651584. Again using the initial state in your puzzle input, what is the correct checksum for this disk?
+
+### Commentary Part 2
+
+So, **35651584** is a rather large number. Strings that long take up a lot of memory -- and processing them takes a lot of time.
+
+Just feeding that figure into my original code ... well, I cancelled it after a few minutes, but I imagine it will happily churn away for quite sme time before running out of memory.
+
+I tried refining some of my loops to be a little more efficient -- although without actually benchmarking them, I'll never know for sure. Either way, it didn't particularly help.
+
+Of course, we have a highly specific problem to solve, so perhaps there's no need to attempt a general solution. It is notable that:
+
+```txt
+35651584 == 1024 * 1024 * 34 = 16 * 16 * 16 * 16 * 16 * 34
+```
+
+Also of note is that a string of 2^n length will always boil down to a checksum of 1 digit.
+
+A binary string of length 16 has 65536 possible values. It would not be too difficult to pre-calculate all possible results, store them in a map, then split our input into 16-digit chunks and look up the checksum digit for that chunk. Append them all together, and repeat a few times, and ... I think that will work. It should certainly reduce our memory requirements -- and if we only calculate the checksum of each new chunk as it is required, that should help too!
+
+### Outcome
+
+```txt
+Solution: 01101100001100100
+> Maximum cached 256-byte checksums: 22
+```
+
+A cached-string length of 16 was still taking rather a long time. Switching that length to 16*16 = 256 gave us our answer almost instantly!
+
+And, somewhat unexpectedly, there were only 22 unique strings that we ended up caching to get our result -- so clearly caching on the fly is far superior to pre-calculating our cache values!
