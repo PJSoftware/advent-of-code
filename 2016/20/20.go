@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"slices"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -70,7 +70,7 @@ func rationalise(input []string) []*Range {
 	for k := range rangeMax {
 		keys = append(keys, k)
 	}
-	slices.Sort(keys)
+	sort.Ints(keys)
 
 	currentRange := &Range{min: keys[0], max: rangeMax[keys[0]]}
 	for i := 1; i < len(keys); i++ {
