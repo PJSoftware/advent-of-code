@@ -2,6 +2,9 @@
 
 version: "3"
 
+includes:
+  2015: ./2015/Taskfile.yaml
+
 tasks:
   default:
     cmds:
