@@ -20,3 +20,4 @@
 - [Day 16](./16/README-16.md) - Dragon Checksum
 - [Day 17](./17/README-17.md) - Two Steps Forward
 - [Day 18](./18/README-18.md) - Like a Rogue
+- [Day 19](./19/README-19.md) - An Elephant Named Joseph
