@@ -78,6 +78,8 @@ With the number of Elves given in your puzzle input, which Elf now gets all the 
 
 ### Shortcut Solution?
 
+[This helped](https://www.reddit.com/r/adventofcode/comments/5j4lp1/2016_day_19_solutions/)!
+
 ```txt
 Solution 2 (n = 1): 1
 Solution 2 (n = 2): 1
