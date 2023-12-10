@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"math"
 
 	"github.com/pjsoftware/advent-of-code/2016/lib/advent"
 )
@@ -12,7 +12,30 @@ func main() {
 
 	fmt.Print("Starting Tests:\n\n")
 	advent.Test("sample1", 3, SolveOriginal(5))
-	advent.Test("sample2", 2, SolveRevised(5))
+
+	var n int
+	n = 1
+	advent.Test(fmt.Sprintf("sample2 (%d elves)", n), 1, SolveRevised(n))
+	n = 2
+	advent.Test(fmt.Sprintf("sample2 (%d elves)", n), 1, SolveRevised(n))
+	n = 3
+	advent.Test(fmt.Sprintf("sample2 (%d elves)", n), 3, SolveRevised(n))
+	n = 4
+	advent.Test(fmt.Sprintf("sample2 (%d elves)", n), 1, SolveRevised(n))
+	n = 5
+	advent.Test(fmt.Sprintf("sample2 (%d elves)", n), 2, SolveRevised(n))
+	n = 9
+	advent.Test(fmt.Sprintf("sample2 (%d elves)", n), 9, SolveRevised(n))
+	n = 10
+	advent.Test(fmt.Sprintf("sample2 (%d elves)", n), 1, SolveRevised(n))
+	n = 18
+	advent.Test(fmt.Sprintf("sample2 (%d elves)", n), 9, SolveRevised(n))
+	n = 19
+	advent.Test(fmt.Sprintf("sample2 (%d elves)", n), 11, SolveRevised(n))
+	n = 55
+	advent.Test(fmt.Sprintf("sample2 (%d elves)", n), 29, SolveRevised(n))
+	n = 242
+	advent.Test(fmt.Sprintf("sample2 (%d elves)", n), 241, SolveRevised(n))
 	advent.BailOnFail()
 	fmt.Print("All tests passed!\n\n")
 
@@ -20,7 +43,7 @@ func main() {
 
 	input := advent.InputInt("19")
 	fmt.Printf("Solution 1: %d\n", SolveOriginal(input))
-	fmt.Printf("Solution 2: %d\n", SolveRevised(input))
+	fmt.Printf("Solution 2 (n = %d): %d\n", input, SolveRevised(input))
 }
 
 // Solution code
@@ -64,41 +87,26 @@ func SolveOriginal(numElves int) int {
 	}
 }
 
+// SolveRevised() calculates our pattern derived by inspection
+// because the algorithmic approach takes far too long for
+// large numbers. See 1-100 results in README
 func SolveRevised(numElves int) int {
-	oc := float64(numElves)
-	round := 1
-	Elf := make([]int, 0)
-	for n := 1; n <= numElves; n++ {
-		Elf = append(Elf, n)
+	x := 0
+	lim := 1
+	preLim := 1
+	for lim < numElves {
+		preLim = lim
+		x++
+		lim = int(math.Pow(3, float64(x)))
 	}
 
-	start := time.Now()
-	for {
-		if numElves%5000 == 0 {
-			pc := 100.0 * float64(numElves) / oc
-			rem := 100.0 - pc
-			elapsed := time.Since(start)
-			rt := elapsed * time.Duration(100.0/rem-1.0)
-			fmt.Printf("Number of elves remaining: %d (remaining: %s)\n", numElves, rt)
-		}
-
-		if len(Elf) == 2 {
-			elapsed := time.Since(start)
-			fmt.Printf("Total elapsed time: %s\n", elapsed)
-			return Elf[0]
-		}
-
-		opposite := numElves / 2
-		Elf[opposite] = 0
-
-		newCircle := make([]int, 0)
-		newCircle = append(newCircle, Elf[1:opposite]...)
-		newCircle = append(newCircle, Elf[opposite+1:numElves]...)
-		newCircle = append(newCircle, Elf[0])
-		numElves = len(newCircle)
-
-		Elf = make([]int, 0)
-		Elf = append(Elf, newCircle...)
-		round++
+	if numElves == lim {
+		return lim
 	}
+
+	if numElves <= preLim*2 {
+		return numElves - preLim
+	}
+
+	return lim - 2*(lim-numElves)
 }
