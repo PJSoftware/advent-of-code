@@ -14,6 +14,18 @@ tasks:
     cmds:
       - task --list-all
 
+  commit0:
+    cmds:
+      - perl ./bin/commit.pl
+
+  commit1:
+    cmds:
+      - perl ./bin/commit.pl 1 {{.CLI_ARGS}}
+
+  commit2:
+    cmds:
+      - perl ./bin/commit.pl 2 {{.CLI_ARGS}}
+
   new:
     cmds:
       - perl ./bin/gen-new-framework.pl {{.YEAR}} {{.CLI_ARGS}}
