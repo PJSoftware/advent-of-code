@@ -4,7 +4,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"log"
 	"regexp"
 
 	"github.com/pjsoftware/advent-of-code/2016/lib/advent"
@@ -44,8 +43,14 @@ func main() {
 		"kglvqrro": "DDUDRLRRUDRD",
 		"ulqzkmiv": "DRURDRUDDLLDLUURRDULRLDUUDDDRR",
 	}
+	test2Data := map[string]int{
+		"ihgpwlah": 370,
+		"kglvqrro": 492,
+		"ulqzkmiv": 830,
+	}
 	for testPass, testAnswer := range testData {
-		advent.Test(fmt.Sprintf("passcode calculation (%s)", testPass), testAnswer, Solve(testPass))
+		advent.Test(fmt.Sprintf("shortest calculation (%s)", testPass), testAnswer, Solve(testPass, false))
+		advent.Test(fmt.Sprintf("longest calculation (%s)", testPass), test2Data[testPass], len(Solve(testPass, true)))
 	}
 	advent.BailOnFail()
 
@@ -54,7 +59,8 @@ func main() {
 	// Solution
 
 	passCode := advent.InputString("17")
-	fmt.Printf("Solution: %s\n", Solve(passCode))
+	fmt.Printf("Solution -- shortest: %s\n", Solve(passCode, false))
+	fmt.Printf("Solution -- longest: %d\n", len(Solve(passCode, true)))
 }
 
 // Solution code
@@ -68,10 +74,13 @@ func NewLocation(x, y int, path string) *Location {
 	return l
 }
 
-func Solve(passcode string) string {
+func Solve(passcode string, findLongest bool) string {
 	PASSCODE = passcode
 	start := NewLocation(1, 1, "")
 	vault := NewLocation(4, 4, "?")
+
+	longestLength := 0
+	longestPath := ""
 
 	possibleLocations := []*Location{start}
 	step := 0
@@ -80,19 +89,28 @@ func Solve(passcode string) string {
 		newLocations := []*Location{}
 
 		if len(possibleLocations) == 0 {
-			log.Fatalf("No possible locations remaining")
+			return longestPath
 		}
 
-		for _, loc := range possibleLocations {
-			for _, dirName := range loc.Unlocked {
+		for _, currLoc := range possibleLocations {
+			for _, dirName := range currLoc.Unlocked {
 				dir := Direction[dirName]
-				x := loc.X + dir.X
-				y := loc.Y + dir.Y
-				if validRoom(x, y) {
-					loc := NewLocation(x, y, loc.Path+dirName)
-					if loc.X == vault.X && loc.Y == vault.Y {
-						return loc.Path
+				x := currLoc.X + dir.X
+				y := currLoc.Y + dir.Y
+				p := currLoc.Path + dirName
+
+				if x == vault.X && y == vault.Y {
+					if !findLongest {
+						return p
 					}
+					if longestLength < len(p) {
+						longestLength = len(p)
+						longestPath = p
+					}
+
+				} else if validRoom(x, y) {
+					loc := NewLocation(x, y, currLoc.Path+dirName)
+
 					if len(loc.Unlocked) > 0 {
 						newLocations = append(newLocations, loc)
 					}
