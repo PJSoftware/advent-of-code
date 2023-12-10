@@ -4,14 +4,13 @@ use strict;
 
 use File::Copy qw{ copy };
 
-my $YEAR = '2016';
-
-if (!defined $ARGV[0]) {
+if (!defined $ARGV[1]) {
   print "No advent day specified!\n";
   exit 1;
 }
 
-my $DAY = $ARGV[0];
+my $YEAR = $ARGV[0];
+my $DAY = $ARGV[1];
 
 if (-d "$YEAR/$DAY") {
   print "$YEAR/$DAY already exists; skipping!\n";
@@ -51,12 +50,12 @@ sub gen_md {
 
 sub gen_code {
   my $day = shift;
-  copy("bin/tmpl/$YEAR/script.go","$YEAR/$day/$day.go");
+  copy("$YEAR/tmpl/script.go","$YEAR/$day/$day.go");
 }
 
 sub append_task {
   my $day = shift;
-  open my $FILE,'>>',"Taskfile.yaml";
+  open my $FILE,'>>',"$YEAR/Taskfile.yaml";
   print $FILE "\n";
   print $FILE "  $day:\n";
   print $FILE "    cmds:\n";
