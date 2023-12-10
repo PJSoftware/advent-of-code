@@ -70,3 +70,7 @@ tasks:
   17:
     cmds:
       - go run ./2016/17
+
+  18:
+    cmds:
+      - go run ./2016/18
