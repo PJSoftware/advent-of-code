@@ -78,3 +78,7 @@ tasks:
   19:
     cmds:
       - go run ./2016/19
+
+  20:
+    cmds:
+      - go run ./2016/20

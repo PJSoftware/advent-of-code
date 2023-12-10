@@ -21,3 +21,4 @@
 - [Day 17](./17/README-17.md) - Two Steps Forward
 - [Day 18](./18/README-18.md) - Like a Rogue
 - [Day 19](./19/README-19.md) - An Elephant Named Joseph
+- [Day 20](./20/README-20.md) - Firewall Rules
