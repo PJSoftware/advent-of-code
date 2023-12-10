@@ -34,9 +34,3 @@ tasks:
     desc: Generate branch for new day NN (task new -- NN)
     cmds:
       - perl ./bin/gen-new-framework.pl {{.YEAR}} {{.CLI_ARGS}}
-
-  merge-day:
-    desc: Merge current day branch back into YEAR ({{.YEAR}}) branch
-    cmds:
-      - perl ./bin/merge-back.pl {{.YEAR}}
-      - git push
