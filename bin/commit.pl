@@ -5,6 +5,12 @@ use strict;
 use lib 'C:/_lib/perl';
 use Git;
 
+my $cb = Git::branch_current();
+if ($cb !~ m{^day\d\d$}) {
+  print "Skipping; commit script only applies to dayNN branch!\n";
+  exit(2);
+}
+
 my $arg = $ARGV[0] // "";
 if ($arg && !defined($ARGV[1])) {
   print "Usage: must specify both DAY and ANSWER!\n";
@@ -13,7 +19,7 @@ if ($arg && !defined($ARGV[1])) {
 
 my $answer = $ARGV[1];
 
-my $cb = Git::branch_current();
+
 $cb =~ s{(\D+)(\d+)}{$1 $2};
 system(qq{git add .});
 

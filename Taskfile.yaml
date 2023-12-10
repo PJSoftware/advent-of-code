@@ -11,26 +11,32 @@ vars:
 
 tasks:
   default:
+    desc: list all available tasks
     cmds:
       - task --list-all
 
   commit0:
+    desc: Commit preliminary puzzle data, test framework, etc
     cmds:
       - perl ./bin/commit.pl
 
   commit1:
+    desc: Commit part 1 solution; must specify answer (task commit1 -- ANSWER)
     cmds:
       - perl ./bin/commit.pl 1 {{.CLI_ARGS}}
 
   commit2:
+    desc: Commit part 2 solution; must specify answer (task commit2 -- ANSWER)
     cmds:
       - perl ./bin/commit.pl 2 {{.CLI_ARGS}}
 
   new:
+    desc: Generate branch for new day NN (task new -- NN)
     cmds:
       - perl ./bin/gen-new-framework.pl {{.YEAR}} {{.CLI_ARGS}}
 
   merge-day:
+    desc: Merge current day branch back into YEAR ({{.YEAR}}) branch
     cmds:
       - perl ./bin/merge-back.pl {{.YEAR}}
       - git push
