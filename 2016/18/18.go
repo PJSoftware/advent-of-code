@@ -36,7 +36,12 @@ func main() {
 	// Solution
 
 	input := advent.InputString("18")
-	fmt.Printf("Solution: %d\n", Solve(NewDetector(input, 40)))
+
+	rc := 40
+	fmt.Printf("Solution (%d): %d\n", rc, Solve(NewDetector(input, rc)))
+
+	rc = 400000
+	fmt.Printf("Solution (%d): %d\n", rc, Solve(NewDetector(input, rc)))
 }
 
 // Solution code
