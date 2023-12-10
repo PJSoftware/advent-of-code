@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/pjsoftware/advent-of-code/2016/lib/advent"
 )
@@ -41,5 +42,31 @@ func main() {
 // Solution code
 
 func Solve(room *TrapDetector) int {
+	row := room.FirstRow
+	room.SafeCount += countSafeSpaces(row)
+	for i := 1; i < room.NumRows; i++ {
+		row = generateNextRow(row)
+		room.SafeCount += countSafeSpaces(row)
+	}
 	return room.SafeCount
+}
+
+func generateNextRow(oldRow string) string {
+	length := len(oldRow)
+	oldRow = SafeTile + oldRow + SafeTile // Add assumed safe tile at each end of row
+
+	row := ""
+	for i := 1; i <= length; i++ {
+		above := oldRow[i-1 : i+2]
+		if above == "^^." || above == ".^^" || above == "^.." || above == "..^" {
+			row += TrapTile
+		} else {
+			row += SafeTile
+		}
+	}
+	return row
+}
+
+func countSafeSpaces(row string) int {
+	return len(strings.ReplaceAll(row, TrapTile, ""))
 }
