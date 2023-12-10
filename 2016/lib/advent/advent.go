@@ -28,13 +28,8 @@ func InputString(num string) string {
 
 // InputInt reads the contents of the input file and converts to an int
 func InputInt(num string) int {
-	fn := inputFile(num)
-	b, err := os.ReadFile(fn)
-	if err != nil {
-		log.Fatalf("error reading '%s': %v", fn, err)
-	}
+	s := InputString(num)
 
-	s := string(b)
 	i, err := strconv.ParseInt(s, 10, 64)
 	if err != nil {
 		log.Fatalf("string '%s' from file not a numeric value!", s)
