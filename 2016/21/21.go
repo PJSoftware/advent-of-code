@@ -25,6 +25,8 @@ type Parser struct {
   Reverse *regexp.Regexp
   // `move position X to position Y` means that the letter which is at index X should be removed from the string, then inserted such that it ends up at index Y.
   MovePos *regexp.Regexp
+
+  Descramble bool
 }
 
 func NewCodeParser() *Parser {
@@ -39,6 +41,10 @@ func NewCodeParser() *Parser {
   p.MovePos = regexp.MustCompile("move position ([0-9]) to position ([0-9])")
 
   return p
+}
+
+func (p *Parser) DescramblingMode() {
+  p.Descramble = true
 }
 
 func main() {
@@ -73,16 +79,32 @@ func main() {
   
   program := advent.InputStrings("21")
   fmt.Printf("Solution: %s\n", parser.RunProgram(program, "abcdefgh"))
+  
+  // Part Two
+  parser.DescramblingMode()
+
+  advent.Test("whole program IN REVERSE", "abcde", parser.RunProgram(testCode, "decab"))
+  advent.BailOnFail()
+
+  fmt.Printf("Descrambled Password: %s\n", parser.RunProgram(program, "fbgdceah"))
 }
 
 // Solution code
 
 func (p *Parser) RunProgram(prog []string, password string) string {
+  if p.Descramble { // Run program backward
+    for i, j := 0, len(prog)-1; i < j; i, j = i+1, j-1 {
+      prog[i], prog[j] = prog[j], prog[i]
+    }
+  }
+
   l := len(password)
   step := 0
   for _, code := range prog {
+    fmt.Printf("> %s(%s): ", code, password)
     step++
     password = p.ExecuteCode(code, password)
+    fmt.Printf("%s\n", password)
     if len(password) != l {
       log.Fatalf("Step %d: '%s' returned invalid length '%s'\n",step, code, password)
     }
@@ -106,6 +128,7 @@ func (p *Parser) ExecuteCode(code string, password string) string {
 }
 
 func (p *Parser) ExecSwapPos(code, password string) string {
+  // code is the same forward and in reverse
   match := p.SwapPos.FindStringSubmatch(code)
   idxX := convertToInt(match[1])
   idxY := convertToInt(match[2])
@@ -115,6 +138,7 @@ func (p *Parser) ExecSwapPos(code, password string) string {
 }
 
 func (p *Parser) ExecSwapLetter(code, password string) string {
+  // code is the same forward and in reverse
   match := p.SwapLetter.FindStringSubmatch(code)
   idxX := strings.Index(password, match[1])
   idxY := strings.Index(password, match[2])
@@ -126,18 +150,50 @@ func (p *Parser) ExecSwapLetter(code, password string) string {
 func (p *Parser) ExecRotLeft(code, password string) string {
   match := p.RotLeft.FindStringSubmatch(code)
   x := convertToInt(match[1])
+
+  // running in reverse changes rotation direction
+  if p.Descramble {
+    return rotateRight(password, x)
+  }
+
   return rotateLeft(password, x)
 }
 
 func (p *Parser) ExecRotRight(code, password string) string {
   match := p.RotRight.FindStringSubmatch(code)
   x := convertToInt(match[1])
+
+  // running in reverse changes rotation direction
+  if p.Descramble {
+    return rotateLeft(password, x)
+  }
+
   return rotateRight(password, x)
 }
 
 func (p *Parser) ExecRotPos(code, password string) string {
   match := p.RotPos.FindStringSubmatch(code)
-  idxX := strings.Index(password, match[1])
+  
+  // running RotPos() in reverse is tricky, since while we can determine the
+  // current position of 'X', what we really need to do is rewind the rotation
+  // to the point at which applying the forward rotation based on the position
+  // of 'X' would result in the scrambled version of the password, and then
+  // return the descrambled version!
+  if p.Descramble {
+    target := password
+    for {
+      password = rotateLeft(password, 1)
+      if rotateByPosition(password, match[1]) == target {
+        return password
+      }
+    }
+  }
+
+  return rotateByPosition(password, match[1])
+}
+
+func rotateByPosition(password, ch string) string {
+  idxX := strings.Index(password, ch)
   x := idxX + 1
   if idxX >= 4 {
     x++
@@ -146,6 +202,7 @@ func (p *Parser) ExecRotPos(code, password string) string {
 }
 
 func (p *Parser) ExecReverse(code, password string) string {
+  // code is the same forward and in reverse
   match := p.Reverse.FindStringSubmatch(code)
   idxX := convertToInt(match[1])
   idxY := convertToInt(match[2])
@@ -160,6 +217,12 @@ func (p *Parser) ExecMovePos(code, password string) string {
   match := p.MovePos.FindStringSubmatch(code)
   idxX := convertToInt(match[1])
   idxY := convertToInt(match[2])
+
+  // running in reverse changes order of indices
+  if p.Descramble {
+    idxX, idxY = idxY, idxX
+  }
+
   ch := password[idxX:idxX+1]
   
   b := []byte{}
