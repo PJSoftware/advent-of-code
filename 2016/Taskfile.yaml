@@ -86,3 +86,7 @@ tasks:
   21:
     cmds:
       - go run ./2016/21
+
+  22:
+    cmds:
+      - go run ./2016/22
