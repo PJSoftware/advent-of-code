@@ -90,3 +90,7 @@ tasks:
   22:
     cmds:
       - go run ./2016/22
+
+  23:
+    cmds:
+      - go run ./2016/23
