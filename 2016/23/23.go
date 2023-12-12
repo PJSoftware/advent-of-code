@@ -29,7 +29,9 @@ func main() {
   // Solution
   
   input := advent.InputStrings("23")
+  numEggs := 7
   ai1 := assembunny.NewInterpreter(input)
+  ai1.SetRegisterA(numEggs)
   ai1.Run()
   fmt.Printf("Solution: %d\n",ai1.RegisterA())
 }

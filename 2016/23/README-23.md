@@ -41,6 +41,8 @@ In this example, the final value in register a is 3.
 
 The rest of the electronics seem to place the keypad entry (the number of eggs, 7) in register a, run the code, and then send the value left in register a to the safe.
 
+What value should be sent to the safe?
+
 ### First Steps
 
 Our first step will be to refactor our [day 12 solution](../12) to move our **assembunny** interpreter into our 2016/lib folder. Before we can modify it (and, indeed, after we modify it) we need to ensure that our code from day 12 still works. Current output is:

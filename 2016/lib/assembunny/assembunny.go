@@ -41,12 +41,13 @@ func NewInterpreter(code []string) *Interpreter {
 	ai.re = make(map[string]*regexp.Regexp)
 
 	regName := "([a-d])"
-	regValue := "([a-d]|[0-9]+)"
-	offset := "(-?[0-9]+)"
+	regValue := "([a-d]|-?[0-9]+)"
 	ai.re["inc"] = regexp.MustCompile("inc "+regName)
 	ai.re["dec"] = regexp.MustCompile("dec "+regName)
+	ai.re["tgl"] = regexp.MustCompile("tgl "+regValue)
+
 	ai.re["cpy"] = regexp.MustCompile("cpy "+regValue+" "+regName)
-	ai.re["jnz"] = regexp.MustCompile("jnz "+regValue+" "+offset)
+	ai.re["jnz"] = regexp.MustCompile("jnz "+regValue+" "+regValue)
 	
 	return ai
 }
@@ -81,10 +82,13 @@ func (ai *Interpreter) Run() int {
 	}
 	for ai.IsRunning() {
 		inst, p1, p2 := ai.NextInstruction()
+		// fmt.Printf("%d: %s %s %s\n", ai.index, inst, p1, p2)
 
 		switch inst {
 		case "inc": ai.inc(p1)
 		case "dec": ai.dec(p1)
+		case "tgl": ai.tgl(p1)
+
 		case "cpy": ai.cpy(p1,p2)
 		case "jnz": ai.jnz(p1,p2)
 
@@ -101,9 +105,9 @@ func (ai *Interpreter) Run() int {
 func (ai *Interpreter) progDump() {
 	for i, line := range ai.code {
 		if i == ai.index {
-			fmt.Printf(">>> %d: %s <<<\n", i, line)
+			fmt.Printf(">>> %d: %s <<<\n", i+1, line)
 		} else {
-			fmt.Printf("%d: %s\n", i, line)
+			fmt.Printf("%d: %s\n", i+1, line)
 		}
 	}
 }
@@ -117,6 +121,31 @@ func (ai *Interpreter) dec(p1 string) {
 	ai.index++
 }
 
+func (ai *Interpreter) tgl(p1 string) {
+	offset := ai.extractVal(p1)
+	// fmt.Printf("tgl command > %d: %s\n", ai.index, ai.code[ai.index])
+	tglIndex := ai.index + offset
+	if tglIndex < 0 || tglIndex >= len(ai.code) {
+		ai.index++
+		return
+	}
+
+	line := ai.code[tglIndex]
+	inst, param := line[:3], line[3:]
+	var newInst string
+	switch inst {
+		case "inc": newInst = "dec"
+		case "dec": newInst = "inc"
+		case "tgl": newInst = "inc"
+		case "jnz": newInst = "cpy"
+		case "cpy": newInst = "jnz"
+	}
+	// fmt.Printf("tgl command > changing %d: '%s' to '%s%s'\n\n", tglIndex, line, newInst, param)
+	ai.code[tglIndex] = newInst + param
+	 
+	ai.index++
+}
+
 func (ai *Interpreter) cpy(p1, p2 string) {
 	regX := p2
 	val := ai.extractVal(p1)
@@ -127,7 +156,7 @@ func (ai *Interpreter) cpy(p1, p2 string) {
 func (ai *Interpreter) jnz(p1, p2 string) {
 	val := ai.extractVal(p1)
 	if val != 0 {
-		ai.index += int(convertToInt(p2))
+		ai.index += ai.extractVal(p2)
 	} else {
 		ai.index++
 	}
@@ -151,6 +180,11 @@ func convertToInt(p string) int {
 // ai.RegisterA() returns the value of register A
 func (ai *Interpreter) RegisterA() int {
 	return ai.reg["a"]
+}
+
+// ai.SetRegisterA() sets the value of register A
+func (ai *Interpreter) SetRegisterA(value int) {
+	ai.reg["a"] = value
 }
 
 // ai.SetRegisterC() sets the value of register C
