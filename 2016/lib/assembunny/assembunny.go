@@ -18,6 +18,7 @@ type Interpreter struct {
 	steps int
 	DNR   bool
 	re    map[string]*regexp.Regexp
+	debug bool
 }
 
 func init() {
@@ -36,6 +37,7 @@ func NewInterpreter(code []string) *Interpreter {
 	ai.index = 0
 	ai.steps = 0
 	ai.DNR = false
+	ai.debug = false
 
 	// Build expected regexp pattern
 	ai.re = make(map[string]*regexp.Regexp)
@@ -50,6 +52,10 @@ func NewInterpreter(code []string) *Interpreter {
 	ai.re["jnz"] = regexp.MustCompile("jnz "+regValue+" "+regValue)
 	
 	return ai
+}
+
+func (ai *Interpreter) Debug() {
+	ai.debug = true
 }
 
 func (ai *Interpreter) IsRunning() bool {
@@ -97,8 +103,14 @@ func (ai *Interpreter) Run() int {
 			log.Fatalf("Unknown instruction '%s' at line %d", inst, ai.index+1)
 		}
 		ai.steps++
+		if ai.debug && ai.steps%1000000 == 0 {
+			fmt.Printf("DEBUG: steps %dM | index = %d | reg = %d,%d,%d,%d\n", int(ai.steps/1000000), ai.index, ai.reg["a"], ai.reg["b"], ai.reg["c"], ai.reg["d"])
+		}
 	}
 
+	if ai.debug {
+		fmt.Printf("Program completed in %d steps\n", ai.steps)
+	}
 	return ai.steps
 }
 
@@ -149,7 +161,9 @@ func (ai *Interpreter) tgl(p1 string) {
 func (ai *Interpreter) cpy(p1, p2 string) {
 	regX := p2
 	val := ai.extractVal(p1)
-	ai.reg[regX] = val
+	if regX == "a" || regX == "b" || regX == "c" || regX == "d" {
+		ai.reg[regX] = val
+	}
 	ai.index++
 } 
 

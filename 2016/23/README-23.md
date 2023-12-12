@@ -41,7 +41,7 @@ In this example, the final value in register a is 3.
 
 The rest of the electronics seem to place the keypad entry (the number of eggs, 7) in register a, run the code, and then send the value left in register a to the safe.
 
-What value should be sent to the safe?
+**What value** should be sent to the safe?
 
 ### First Steps
 
@@ -58,3 +58,17 @@ Running assembunny code:
 Solution Part 1: 318020
 Solution Part 2: 9227674
 ```
+
+## Part Two
+
+The safe doesn't open, but it **does** make several angry noises to express its frustration.
+
+You're quite sure your logic is working correctly, so the only other thing is... you check the painting again. As it turns out, colored eggs are still eggs. Now you count 12.
+
+As you run the program with this new input, the prototype computer begins to **overheat**. You wonder what's taking so long, and whether the lack of any instruction more powerful than "add one" has anything to do with it. Don't bunnies usually **multiply**?
+
+Anyway, **what value** should actually be sent to the safe?
+
+### Commentary
+
+Part 2 seems to be multiplying some extremely large numbers together. I added the DEBUG code so I could watch its progress.
