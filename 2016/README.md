@@ -1,6 +1,6 @@
 # Advent of Code 2016
 
-[link](https://adventofcode.com/2016)
+[link](https://adventofcode.com/2016) -- these answers are coded in [Go](../languages/Go.md).
 
 - [Day 1](./01/README-01.md) - No Time for a Taxicab
 - [Day 2](./02/README-02.md) - Bathroom Security
