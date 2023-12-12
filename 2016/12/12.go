@@ -22,7 +22,10 @@ func main() {
     "jnz a 2",
     "dec a",
   }
-  advent.Test("testCode", 42, assembunny.RunAndReturnA(testCode))
+
+  testAI := assembunny.NewInterpreter(testCode)
+  testAI.Run()
+  advent.Test("testCode", 42, testAI.RegisterA())
   advent.BailOnFail()
   fmt.Print("All tests passed!\n\n");
   
@@ -30,10 +33,13 @@ func main() {
   
   input := advent.InputStrings("12")
   fmt.Print("Running assembunny code:\n")
-  fmt.Printf("Solution Part 1: %d\n",assembunny.RunAndReturnA(input))
+  
+  ai1 := assembunny.NewInterpreter(input)
+  ai1.Run()
+  fmt.Printf("Solution Part 1: %d\n",ai1.RegisterA())
 
-  input2 := []string{}
-  input2 = append(input2, "cpy 1 c")
-  input2 = append(input2, input...)
-  fmt.Printf("Solution Part 2: %d\n",assembunny.RunAndReturnA(input2))
+  ai2 := assembunny.NewInterpreter(input)
+  ai2.SetRegisterC(1)
+  ai2.Run()
+  fmt.Printf("Solution Part 2: %d\n",ai2.RegisterA())
 }

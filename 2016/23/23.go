@@ -20,12 +20,16 @@ func main() {
     "dec a",
   }
   fmt.Print("Starting Tests:\n\n")
-  advent.Test("test code", 3, assembunny.RunAndReturnA(testProg))
+  testAI := assembunny.NewInterpreter(testProg)
+  testAI.Run()
+  advent.Test("test code", 3, testAI.RegisterA())
   advent.BailOnFail()
   fmt.Print("All tests passed!\n\n");
   
   // Solution
   
   input := advent.InputStrings("23")
-  fmt.Printf("Solution: %d\n",assembunny.RunAndReturnA(input))
+  ai1 := assembunny.NewInterpreter(input)
+  ai1.Run()
+  fmt.Printf("Solution: %d\n",ai1.RegisterA())
 }
