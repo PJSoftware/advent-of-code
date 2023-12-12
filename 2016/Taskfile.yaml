@@ -101,3 +101,7 @@ tasks:
     cmds:
       - task: slow
       - go run ./2016/23
+
+  24:
+    cmds:
+      - go run ./2016/24

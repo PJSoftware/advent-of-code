@@ -25,3 +25,4 @@
 - [Day 21](./21/README-21.md) - Scrambled Letters and Hash
 - [Day 22](./22/README-22.md) - Grid Computing
 - [Day 23](./23/README-23.md) - Safe Cracking
+- [Day 24](./24/README-24.md) - Air Duct Spelunking
