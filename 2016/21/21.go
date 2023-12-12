@@ -101,10 +101,8 @@ func (p *Parser) RunProgram(prog []string, password string) string {
   l := len(password)
   step := 0
   for _, code := range prog {
-    fmt.Printf("> %s(%s): ", code, password)
     step++
     password = p.ExecuteCode(code, password)
-    fmt.Printf("%s\n", password)
     if len(password) != l {
       log.Fatalf("Step %d: '%s' returned invalid length '%s'\n",step, code, password)
     }
