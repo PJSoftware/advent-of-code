@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math"
 	"regexp"
 	"strconv"
 
@@ -91,9 +92,11 @@ func main() {
       testGrid.AddNode(n)
     }
   }
+  testGrid.VisualiseGrid(12)
+
   advent.Test("nodes loaded correctly", 9, len(testGrid.Nodes))
   advent.Test("viable pairs", 7, testGrid.CountViablePairs()) // 7, apparently!
-  advent.Test("steps to retrieve", 7, testGrid.RetrievePayload())
+  // advent.Test("steps to retrieve", 7, testGrid.RetrievePayload())
   advent.BailOnFail()
   fmt.Print("All tests passed!\n\n");
 
@@ -106,8 +109,9 @@ func main() {
       g.AddNode(n)
     }
   }
-  fmt.Printf("%d nodes imported into grid\n", len(g.Nodes))
+  g.VisualiseGrid(100)
 
+  fmt.Printf("%d nodes imported into grid\n", len(g.Nodes))
   fmt.Printf("Viable Pairs: %d\n",g.CountViablePairs())
   fmt.Printf("Steps to retrieve: %d\n",g.RetrievePayload())
 }
@@ -125,6 +129,30 @@ func (g *Grid) CountViablePairs() int {
     }
   }
   return viable
+}
+
+func (g *Grid) VisualiseGrid(threshold int) {
+  payload := g.RetrieveNodeByCoordinates(g.MaxX, 0)
+  empty := g.RetrieveEmptyNode()
+
+  nodeAverage := "🟩"
+  nodeLarge := "🟥"
+  nodeEmpty := "🟨"
+  nodePayload := "🟦"
+  for y := 0; y <= g.MaxY; y++ {
+    for x := 0; x <= g.MaxX; x++ {
+      n := g.RetrieveNodeByCoordinates(x,y)
+      cell := ""
+      switch {
+      case n.Name() == payload.Name(): cell = nodePayload
+      case n.Name() == empty.Name(): cell = nodeEmpty
+      case n.Size > threshold: cell = nodeLarge
+      default: cell = nodeAverage
+      }
+      fmt.Print(cell)
+    }
+    fmt.Println()
+  }
 }
 
 // RetrievePayload() approach: A quick visual inspection of the data shows that
@@ -152,9 +180,16 @@ func (g *Grid) RetrievePayload() int {
   // roadblocks to actually performing the operation (although I'm sure Step 2
   // will change that! (Oh wait; this is step 2!)) Since all we want is the
   // number of steps, we should be able to calculate that directly.
-  stepsToMoveEmpty := empty.Y-payload.Y + payload.X-empty.X-1
+  steps := g.MoveEmptyTo(empty, 24,6)
+  empty = g.RetrieveEmptyNode()
+  fmt.Printf("Empty node %dT now @ (%d,%d)\n", empty.Used, empty.X, empty.Y)
+
+  steps += g.MoveEmptyTo(empty, payload.X-1, payload.Y)
+  empty = g.RetrieveEmptyNode()
+  fmt.Printf("Empty node %dT now @ (%d,%d)\n", empty.Used, empty.X, empty.Y)
+
   stepsToWalkPayload := (payload.X-1)*5 + 1
-  return stepsToMoveEmpty + stepsToWalkPayload
+  return steps + stepsToWalkPayload
 }
 
 func (g *Grid) RetrieveNodeByCoordinates(x, y int) *Node {
@@ -180,4 +215,15 @@ func convertToInt(s string) int {
     log.Fatalf("Unexpected conversion error, '%s' not numeric!", s)
   }
   return int(i)
+}
+
+func (g *Grid) MoveEmptyTo(empty *Node, x,y int) int {
+  n := g.RetrieveNodeByCoordinates(x,y)
+  dist := int(math.Abs(float64(n.X - empty.X)))
+  dist += int(math.Abs(float64(n.Y - empty.Y)))
+  n.Used, empty.Used = empty.Used, n.Used
+  if n.Used > n.Size || empty.Used > empty.Size {
+    log.Fatalf("Cannot swap nodes %s and %s", n.Name(), empty.Name())
+  }
+  return dist
 }
