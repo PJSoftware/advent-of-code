@@ -3,6 +3,11 @@
 version: "3"
 
 tasks:
+  slow:
+    internal: true
+    cmds:
+      - perl ./bin/slow-runner.pl
+
   01:
     cmds:
       - go run ./2016/01
@@ -45,6 +50,7 @@ tasks:
 
   11:
     cmds:
+      - task: slow
       - go run ./2016/11
 
   12:
@@ -93,4 +99,5 @@ tasks:
 
   23:
     cmds:
+      - task: slow
       - go run ./2016/23

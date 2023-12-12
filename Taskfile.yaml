@@ -3,7 +3,7 @@
 version: "3"
 
 includes:
-  # 2015: ./2015/Taskfile.yaml
+  2015: ./2015/Taskfile.yaml
   2016: ./2016/Taskfile.yaml
 
 vars:
