@@ -8,6 +8,10 @@ tasks:
     cmds:
       - perl ./bin/slow-runner.pl
 
+  test:
+    cmds:
+      - go test ./2016/lib/**
+
   01:
     cmds:
       - go run ./2016/01

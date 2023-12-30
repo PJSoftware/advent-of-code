@@ -6,7 +6,19 @@ import (
 	"os"
 
 	"github.com/pjsoftware/advent-of-code/2016/lib/advent"
+	"github.com/pjsoftware/advent-of-code/2016/lib/graph"
 )
+
+type Dir struct {
+	X,Y int
+}
+
+var Directions = []*Dir{
+	{0,1},	// Up
+	{0,-1},	// Down
+	{-1,0},	// Left
+	{1,0},	// Right
+}
 
 func main() {
   // Tests
@@ -42,67 +54,55 @@ func main() {
 // once more to our network of nodes and links, to find the shortest path
 // through every node.
 
-type Grid struct {
-  grid [][]*Cell // this is actually, counter-intuitively, [y][x]byte
-  dy, dx int
-  nodes []*Node
-}
-
-type Cell struct {
-  value byte
-  dist int
-}
-
-type Node struct {
-  value string
-  x, y int
-  dist int
-  links []*Link
-}
-
-type Link struct {
-  node1 *Node
-  node2 *Node
-  dist int
-}
-
 func Solve(maze []string) int {
-  grid := ConvertToGrid(maze)
-  _ = grid
+  _ = ConvertToGraph(maze)
+  // names := g.Names()
   return 0
 }
 
-func ConvertToGrid(maze []string) *Grid {
-  g := &Grid{}
-  g.dy = len(maze)
-  g.dx = len(maze[0])
+func ConvertToGraph(maze []string) *graph.Graph {
+  g := graph.NewGraph()
 
-  g.grid = make([][]*Cell, g.dy)
-  for i := range g.grid {
-    g.grid[i] = make([]*Cell, g.dx)
-    bfr := []byte(maze[i])
-    for j := range bfr {
-      cell := &Cell{}
-      cell.dist = math.MaxInt
-      cell.value = bfr[j]
-      g.grid[i][j] = cell
+  var minX, minY, maxX, maxY int
+  minX = math.MaxInt
+  minY = math.MaxInt
+  maxX = 0
+  maxY = 0
+  for y, row  := range maze {
+    rowBfr := []byte(row)
+    for x, cell := range rowBfr {
+      if cell == '#' {
+        continue
+      }
+
+      if x < minX { minX = x }
+      if x > maxX { maxX = x }
+      if y < minY { minY = y }
+      if y > maxY { maxY = y }
+      key := generateKey(x,y)
+      var name string
+      if cell == '.' {
+        name = ""
+      } else {
+        name = string(cell)
+      }
+      fmt.Printf("%s: %s\n", name, key)
+      g.AddIdentifiedNode(key,name,math.MaxInt)
     }
   }
 
-  g.nodes = make([]*Node, 0)
-  for y := 0; y < g.dy; y++ {
-    for x := 0; x < g.dx; x++ {
-      if g.grid[y][x].value == '#' || g.grid[y][x].value == '.' {
-        continue
-      }
-      node := &Node{}
-      node.value = string(g.grid[y][x].value)
-      node.dist = math.MaxInt
-      if node.value == "0" {
-        node.dist = 0
-      }
-      g.nodes = append(g.nodes, node)
+  for x := minX; x <= maxX; x++ {
+    for y := minY; y <= maxY; y++ {
+      src := generateKey(x,y)
+      pRight := generateKey(x+1,y)
+      pDown := generateKey(x,y+1)
+      g.AddPathBetween(src, pRight, 1)
+      g.AddPathBetween(src, pDown, 1)
     }
   }
   return g
+}
+
+func generateKey(x, y int) string {
+  return fmt.Sprintf("(%d,%d)", x, y)
 }
