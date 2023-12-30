@@ -18,8 +18,8 @@ type Graph struct {
 	Nodes map[int]*Node
 	Paths map[string]*Path
 
-	Keys  map[string]int
-	Names map[string]int
+	keys  map[string]int
+	names map[string]int
 
 	nodeType graphNodeType
 }
@@ -48,8 +48,8 @@ func NewGraph() *Graph {
 	g := &Graph{}
 	g.Paths = make(map[string]*Path)
 	g.Nodes = make(map[int]*Node)
-	g.Keys = make(map[string]int)
-	g.Names = make(map[string]int)
+	g.keys = make(map[string]int)
+	g.names = make(map[string]int)
 	g.nodeType = undefined
 	return g
 }
@@ -89,18 +89,18 @@ func (g *Graph) AddIdentifiedNode(key string, name string, value int) error {
 	}
 
 	if key != "" {
-		if _, exists := g.Keys[key]; exists {
+		if _, exists := g.keys[key]; exists {
 			return fmt.Errorf("key '%s' already exists in graph", key)
 		}
-		if _, exists := g.Names[key]; exists {
+		if _, exists := g.names[key]; exists {
 			return fmt.Errorf("key '%s' matches a Name already used in graph", key)
 		}
 	}
 	if name != "" {
-		if _, exists := g.Names[name]; exists {
+		if _, exists := g.names[name]; exists {
 			return fmt.Errorf("name '%s' already exists in graph", name)
 		}
-		if _, exists := g.Keys[name]; exists {
+		if _, exists := g.keys[name]; exists {
 			return fmt.Errorf("name '%s' matches a Key already used in graph", name)
 		}
 	}
@@ -110,10 +110,10 @@ func (g *Graph) AddIdentifiedNode(key string, name string, value int) error {
 	g.addNode(index, value)
 
 	if key != "" {
-		g.Keys[key] = index
+		g.keys[key] = index
 	}
 	if name != "" {
-		g.Names[name] = index
+		g.names[name] = index
 	}
 	return nil
 }
@@ -211,10 +211,10 @@ func (g *Graph) identifyNode(ident any) (int, error) {
 		if str, ok = ident.(string); !ok {
 			return 0, fmt.Errorf("string identifier expected for identified nodes; '%v' is a %T", ident, ident)
 		}
-		if idx, exists := g.Names[str]; exists {
+		if idx, exists := g.names[str]; exists {
 			return idx, nil
 		}
-		if idx, exists := g.Keys[str]; exists {
+		if idx, exists := g.keys[str]; exists {
 			return idx, nil
 		}
 		return 0, fmt.Errorf("specified ident '%s' does not exist as either name or key", str)
@@ -245,4 +245,32 @@ func (g *Graph) Neighbours(index int) []int {
 	}
 
 	return result
+}
+
+// Names() returns a slice of all node names
+func (g *Graph) Names() []string {
+	names := make([]string, 0, len(g.names))
+	for name := range g.names {
+		names = append(names, name)
+	}
+	return names
+}
+
+// NodeByName() returns the index of the node with the specified name. It
+// returns an error if the name specified does not exist.
+func (g *Graph) NodeByName(name string) (int, error) {
+	idx, exists := g.names[name]
+	if !exists {
+		return 0, fmt.Errorf("node with name '%s' does not exist", name)
+	}
+	return idx, nil
+}
+
+// Keys() returns a slice of all node keys
+func (g *Graph) Keys() []string {
+	keys := make([]string, 0, len(g.keys))
+	for key := range g.keys {
+			keys = append(keys, key)
+	}
+	return keys
 }

@@ -50,13 +50,24 @@ func main() {
 // grid of cells -- and we can create a node for each named cell. We can then
 // use the Dijkstra algorithm with our grid -- once for each named cell -- to
 // find the shortest path to each other named cell, and create links with that
-// distance between each node. Finally, we can then apply the Dijkstra algorithm
-// once more to our network of nodes and links, to find the shortest path
-// through every node.
+// distance between each node. Finally, we can then apply the TSP algorithm to
+// our network of nodes and links, to find the shortest path through every node.
 
 func Solve(maze []string) int {
-  _ = ConvertToGraph(maze)
-  // names := g.Names()
+  g1 := ConvertToGraph(maze)
+  g2 := graph.NewGraph()
+
+  names := g1.Names()
+  for _, name := range names {
+    g2.AddIdentifiedNode("",name, math.MaxInt)
+  }
+
+  seen := make(map[string]bool)
+  for  _, name := range names {
+    seen[name] = true
+    idx, _ := g1.NodeByName(name)
+    fmt.Printf("Name: %s (%d)\n", name, idx)
+  }
   return 0
 }
 
@@ -86,7 +97,6 @@ func ConvertToGraph(maze []string) *graph.Graph {
       } else {
         name = string(cell)
       }
-      fmt.Printf("%s: %s\n", name, key)
       g.AddIdentifiedNode(key,name,math.MaxInt)
     }
   }
