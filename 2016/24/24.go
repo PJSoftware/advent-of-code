@@ -26,14 +26,16 @@ func main() {
     "#4.......3#",
     "###########",
   }
-  advent.Test("testMaze", 14, Solve(testMaze))
+  advent.Test("testMaze", 14, Solve(testMaze, false))
+  advent.Test("testMaze", 20, Solve(testMaze, true))
   advent.BailOnFail()
   fmt.Print("All tests passed!\n\n");
   
   // Solution
   
   maze := advent.InputStrings("24")
-  fmt.Printf("Solution: %d\n",Solve(maze))
+  fmt.Printf("Solution 1: %d\n",Solve(maze, false))
+  fmt.Printf("Solution 2: %d\n",Solve(maze, true))
 }
 
 // Solution code
@@ -45,7 +47,7 @@ func main() {
 // distance between each node. Finally, we can then apply the TSP algorithm to
 // our network of nodes and links, to find the shortest path through every node.
 
-func Solve(maze []string) int {
+func Solve(maze []string, loop bool) int {
   g1 := ConvertToGraph(maze)
   g2 := graph.NewGraph()
 
@@ -69,12 +71,12 @@ func Solve(maze []string) int {
     }
   }
 
-  return ShortestPath(g2, "0")
+  return ShortestPath(g2, "0", loop)
 }
 
 var shortestPathLength int
 
-func ShortestPath(g *graph.Graph, startNodeName string) int {
+func ShortestPath(g *graph.Graph, startNodeName string, loop bool) int {
   namesRandom := g.Names()
   start := "0"
   names := []string{}
@@ -84,14 +86,14 @@ func ShortestPath(g *graph.Graph, startNodeName string) int {
     }
   }
   shortestPathLength = math.MaxInt
-  shortestPermutation(g, start, names, len(names))
+  shortestPermutation(g, start, names, len(names), loop)
   return shortestPathLength
 }
 
 // Heap's algorithm for generating permutations
-func shortestPermutation(g *graph.Graph, start string, names []string, size int) {
+func shortestPermutation(g *graph.Graph, start string, names []string, size int, loop bool) {
 	if size == 1 {
-    dist := calculateLength(g, start, names)
+    dist := calculateLength(g, start, names, loop)
 		// fmt.Printf("0 -> %v (%d)\n", names, dist)
     if dist < shortestPathLength {
       shortestPathLength = dist
@@ -99,7 +101,7 @@ func shortestPermutation(g *graph.Graph, start string, names []string, size int)
 	}
 
 	for i := 0; i < size; i++ {
-		shortestPermutation(g, start, names, size-1)
+		shortestPermutation(g, start, names, size-1, loop)
 
 		if size%2 == 1 {
 			names[0], names[size-1] = names[size-1], names[0]
@@ -109,10 +111,16 @@ func shortestPermutation(g *graph.Graph, start string, names []string, size int)
 	}
 }
 
-func calculateLength(g *graph.Graph, start string, names []string) int {
+func calculateLength(g *graph.Graph, start string, names []string, loop bool) int {
   dist := 0
   n1 := start
-  for _, n2 := range names {
+  path := []string{}
+  path = append(path, names...)
+  if loop {
+    path = append(path, start)
+  }
+
+  for _, n2 := range path {
     length, err := g.PathLength(n1, n2)
     if err != nil {
       log.Fatalf("no path length: %v", err)
