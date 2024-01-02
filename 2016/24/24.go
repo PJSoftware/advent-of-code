@@ -64,7 +64,7 @@ func Solve(maze []string) int {
       if seen[target] { continue }
       tgt, _ := g1.NodeByName(target)
       tv := nodeValue(g1, tgt)
-      fmt.Printf("Distance from %s to %s: %d\n", source, target, tv.Distance)
+      // fmt.Printf("Distance from %s to %s: %d\n", source, target, tv.Distance)
       g2.AddPathBetween(source, target, tv.Distance)
     }
   }
@@ -72,39 +72,55 @@ func Solve(maze []string) int {
   return ShortestPath(g2, "0")
 }
 
+var shortestPathLength int
+
 func ShortestPath(g *graph.Graph, startNodeName string) int {
-  current, _ := g.NodeByName(startNodeName)
-  fmt.Printf("Examine node '%s': #%d ('%s')\n", startNodeName, current, g.NodeName(current))
-  resetNodeValues(g, math.MaxInt, false)
-  
-  dist := 0
-  for {
-    setNodeValue(g, current, dist, true)
-    neighbours := g.Neighbours(current)
-    cd := math.MaxInt
-    closest := 0
-    found := false
-    for _, neighbour := range neighbours {
-      nv := nodeValue(g, neighbour)
-      if nv.Visited { continue }
-
-      pathLength, err := g.PathLength(current, neighbour)
-      if err != nil {
-        log.Fatalf("error getting path length: %v", err)
-      }
-      if pathLength < cd {
-        cd = pathLength
-        closest = neighbour
-        found = true
-      }
+  namesRandom := g.Names()
+  start := "0"
+  names := []string{}
+  for _, name := range namesRandom {
+    if name != start {
+      names = append(names, name)
     }
-
-    if !found { return dist }
-
-    dist += cd
-    fmt.Printf("** Distance from %d ('%s') to %d ('%s') = %d (Total: %d)\n", current, g.NodeName(current), closest, g.NodeName(closest), cd, dist)
-    current = closest
   }
+  shortestPathLength = math.MaxInt
+  shortestPermutation(g, start, names, len(names))
+  return shortestPathLength
+}
+
+// Heap's algorithm for generating permutations
+func shortestPermutation(g *graph.Graph, start string, names []string, size int) {
+	if size == 1 {
+    dist := calculateLength(g, start, names)
+		// fmt.Printf("0 -> %v (%d)\n", names, dist)
+    if dist < shortestPathLength {
+      shortestPathLength = dist
+    }
+	}
+
+	for i := 0; i < size; i++ {
+		shortestPermutation(g, start, names, size-1)
+
+		if size%2 == 1 {
+			names[0], names[size-1] = names[size-1], names[0]
+		} else {
+			names[i], names[size-1] = names[size-1], names[i]
+		}
+	}
+}
+
+func calculateLength(g *graph.Graph, start string, names []string) int {
+  dist := 0
+  n1 := start
+  for _, n2 := range names {
+    length, err := g.PathLength(n1, n2)
+    if err != nil {
+      log.Fatalf("no path length: %v", err)
+    }
+    dist += length
+    n1 = n2
+  }
+  return dist
 }
 
 func ConvertToGraph(maze []string) *graph.Graph {
