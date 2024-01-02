@@ -68,11 +68,13 @@ func InputStrings(num string) []string {
 // Testing functions
 
 var testsFailed int
+var testsRun int
 
 func Test(testName string, exp any, got any) {
 	if reflect.TypeOf(exp) != reflect.TypeOf(got) {
 		log.Fatalf("exp '%v' vs got '%v'; not the same type! (%s vs %s)", exp, got, reflect.TypeOf(exp), reflect.TypeOf(got))
 	}
+	testsRun++
 	if got == exp {
 		fmt.Printf("OK -- '%s' => %v / passed\n", testName, got)
 	} else {
@@ -83,7 +85,7 @@ func Test(testName string, exp any, got any) {
 
 func BailOnFail() {
 	if testsFailed > 0 {
-		log.Fatalf("Sample Data Tests: %d failed", testsFailed)
+		log.Fatalf("Sample Data Tests: %d/%d failed", testsFailed, testsRun)
 	}
 	fmt.Println()
 }
