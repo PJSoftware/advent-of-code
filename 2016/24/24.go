@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"os"
 
 	"github.com/pjsoftware/advent-of-code/2016/lib/advent"
 	"github.com/pjsoftware/advent-of-code/2016/lib/graph"
@@ -31,8 +30,6 @@ func main() {
   advent.BailOnFail()
   fmt.Print("All tests passed!\n\n");
   
-  os.Exit(1)
-
   // Solution
   
   maze := advent.InputStrings("24")
@@ -54,7 +51,7 @@ func Solve(maze []string) int {
 
   names := g1.Names()
   for _, name := range names {
-    g2.AddIdentifiedNode("",name, math.MaxInt)
+    g2.AddIdentifiedNode("", name, math.MaxInt)
   }
 
   seen := make(map[string]bool)
@@ -71,7 +68,43 @@ func Solve(maze []string) int {
       g2.AddPathBetween(source, target, tv.Distance)
     }
   }
-  return 0
+
+  return ShortestPath(g2, "0")
+}
+
+func ShortestPath(g *graph.Graph, startNodeName string) int {
+  current, _ := g.NodeByName(startNodeName)
+  fmt.Printf("Examine node '%s': #%d ('%s')\n", startNodeName, current, g.NodeName(current))
+  resetNodeValues(g, math.MaxInt, false)
+  
+  dist := 0
+  for {
+    setNodeValue(g, current, dist, true)
+    neighbours := g.Neighbours(current)
+    cd := math.MaxInt
+    closest := 0
+    found := false
+    for _, neighbour := range neighbours {
+      nv := nodeValue(g, neighbour)
+      if nv.Visited { continue }
+
+      pathLength, err := g.PathLength(current, neighbour)
+      if err != nil {
+        log.Fatalf("error getting path length: %v", err)
+      }
+      if pathLength < cd {
+        cd = pathLength
+        closest = neighbour
+        found = true
+      }
+    }
+
+    if !found { return dist }
+
+    dist += cd
+    fmt.Printf("** Distance from %d ('%s') to %d ('%s') = %d (Total: %d)\n", current, g.NodeName(current), closest, g.NodeName(closest), cd, dist)
+    current = closest
+  }
 }
 
 func ConvertToGraph(maze []string) *graph.Graph {

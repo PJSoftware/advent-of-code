@@ -117,9 +117,11 @@ func (g *Graph) AddIdentifiedNode(key string, name string, value any) error {
 
 	if key != "" {
 		g.keys[key] = index
+		g.nodes[index].Key = key
 	}
 	if name != "" {
 		g.names[name] = index
+		g.nodes[index].Name = name
 	}
 	return nil
 }
@@ -303,6 +305,11 @@ func (g *Graph) SetNodeValue(index int, value any) {
 // NodeValue() returns the value of the specified node
 func (g *Graph) NodeValue(index int) any {
 	return g.nodes[index].Value
+}
+
+// NodeName() returns the name of the specified node
+func (g *Graph) NodeName(index int) string {
+	return g.nodes[index].Name
 }
 
 // PathLength() returns the length of the direct path from NodeA to NodeB. If
