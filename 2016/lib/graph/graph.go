@@ -215,6 +215,12 @@ func (g *Graph) identifyNode(ident any) (int, error) {
 
 	if g.nodeType == identified {
 		var str string
+		if idxNamed, ok := ident.(int); ok {
+			if _, exists := g.nodes[idxNamed]; !exists {
+				return 0, fmt.Errorf("index %d does not exist in graph", idxNamed)
+			}
+			return idxNamed, nil
+		}
 		if str, ok = ident.(string); !ok {
 			return 0, fmt.Errorf("string identifier expected for identified nodes; '%v' is a %T", ident, ident)
 		}
@@ -297,4 +303,24 @@ func (g *Graph) SetNodeValue(index int, value any) {
 // NodeValue() returns the value of the specified node
 func (g *Graph) NodeValue(index int) any {
 	return g.nodes[index].Value
+}
+
+// PathLength() returns the length of the direct path from NodeA to NodeB. If
+// the specified path is not defined, it returns an error
+func (g *Graph) PathLength(node1, node2 any) (int, error) {
+	var n1, n2 int
+	var err error
+	if n1, err = g.identifyNode(node1); err != nil {
+		return -1, err
+	}	
+	if n2, err = g.identifyNode(node2); err != nil {
+		return -1, err
+	}
+
+	node := g.nodes[n1]
+	if path, ok := node.Paths[n2]; ok {
+		return path.Weight, nil
+	}
+	
+	return -1, fmt.Errorf("path between nodes '%v' and '%v' not found", node1, node2)
 }

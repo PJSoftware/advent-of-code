@@ -131,17 +131,21 @@ func FindShortestDistancesFrom(g *graph.Graph, index int) {
   setNodeValue(g, index, 0, false)
 
   for {
-    idx, err := getNextNode(g)
+    currentNode, err := getNextNode(g)
     if err != nil { return }
 
-    cv := nodeValue(g, idx)
-    setNodeValue(g, idx, cv.Distance, true)
-    neighbours := g.Neighbours(idx)
-    for _, node := range neighbours {
-      nv := nodeValue(g, node)
-      dist := cv.Distance+1
+    cv := nodeValue(g, currentNode)
+    setNodeValue(g, currentNode, cv.Distance, true)
+    neighbours := g.Neighbours(currentNode)
+    for _, neighbour := range neighbours {
+      pathLength, err := g.PathLength(currentNode, neighbour)
+      if err != nil {
+        log.Fatalf("path between nodes %d and %d not found: %v", currentNode, neighbour, err)
+      }
+      nv := nodeValue(g, neighbour)
+      dist := cv.Distance + pathLength
       if !nv.Visited && nv.Distance > dist {
-        setNodeValue(g, node, dist, false)
+        setNodeValue(g, neighbour, dist, false)
       }
     }
   }
