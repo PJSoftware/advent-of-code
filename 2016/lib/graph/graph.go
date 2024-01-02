@@ -15,12 +15,13 @@ const (
 // of all Paths. It also maintains an index of all Nodes' Keys, and Names where
 // relevant.
 type Graph struct {
-	Nodes map[int]*Node
+	nodes map[int]*Node
 	Paths map[string]*Path
 
 	keys  map[string]int
 	names map[string]int
 
+	nodeList []int
 	nodeType graphNodeType
 }
 
@@ -30,7 +31,7 @@ type Graph struct {
 // Finally, each Node maintains a list of all Paths which lead from it.
 type Node struct {
 	Index int
-	Value int
+	Value any
 	Key   string
 	Name  string
 	Paths map[int]*Path
@@ -47,21 +48,26 @@ type Path struct {
 func NewGraph() *Graph {
 	g := &Graph{}
 	g.Paths = make(map[string]*Path)
-	g.Nodes = make(map[int]*Node)
+	g.nodes = make(map[int]*Node)
 	g.keys = make(map[string]int)
 	g.names = make(map[string]int)
 	g.nodeType = undefined
 	return g
 }
 
+// Nodes() returns the list of all node indices belonging to the graph
+func (g *Graph) Nodes() []int {
+	return g.nodeList
+}
+
 // AddAnonymousNode() adds an anonymous node to the graph, using the specified index, and
 // sets the node's value. AddAnonymousNode() and AddIdentifiedNode() are not
 // compatible.
-func (g *Graph) AddAnonymousNode(index, value int) error {
+func (g *Graph) AddAnonymousNode(index int, value any) error {
 	if g.nodeType == identified {
 		return fmt.Errorf("may not mix calls to AddIdentifiedNode() and AddAnonymousNode()")
 	}
-	if _, exists := g.Nodes[index]; exists {
+	if _, exists := g.nodes[index]; exists {
 		return fmt.Errorf("index %d already exists in graph", index)
 	}
 
@@ -79,7 +85,7 @@ func (g *Graph) AddAnonymousNode(index, value int) error {
 // AddIdentifiedNode() ensures that both the Key and Name are not only unique,
 // but that there is no crossover between the two. Names may not be used as
 // Keys, and vice versa.
-func (g *Graph) AddIdentifiedNode(key string, name string, value int) error {
+func (g *Graph) AddIdentifiedNode(key string, name string, value any) error {
 	if g.nodeType == anonymous {
 		panic("may not mix calls to AddAnonymousNode() and AddIdentifiedNode()")
 	}
@@ -106,7 +112,7 @@ func (g *Graph) AddIdentifiedNode(key string, name string, value int) error {
 	}
 
 	g.nodeType = identified
-	index := len(g.Nodes) + 1
+	index := len(g.nodes) + 1
 	g.addNode(index, value)
 
 	if key != "" {
@@ -119,12 +125,13 @@ func (g *Graph) AddIdentifiedNode(key string, name string, value int) error {
 }
 
 // addNode() creates a new node and adds it to the graph
-func (g *Graph) addNode(index, value int) {
+func (g *Graph) addNode(index int, value any) {
 	n := &Node{}
 	n.Index = index
 	n.Value = value
 	n.Paths = make(map[int]*Path)
-	g.Nodes[index] = n
+	g.nodes[index] = n
+	g.nodeList = append(g.nodeList, index)
 }
 
 // AddDirectedPath adds a one-directional path from <fromNode> to <toNode>.
@@ -148,7 +155,7 @@ func (g *Graph) AddDirectedPath(fromNode, toNode any, weight int) error {
 	}
 
 	path := g.addPath(from, to, weight, true, pathKey)
-	g.Nodes[from].Paths[to] = path
+	g.nodes[from].Paths[to] = path
 	return nil
 }
 
@@ -173,8 +180,8 @@ func (g *Graph) AddPathBetween(node1, node2 any, weight int) error {
 	}
 
 	path := g.addPath(n1, n2, weight, true, pathKey)
-	g.Nodes[n1].Paths[n2] = path
-	g.Nodes[n2].Paths[n1] = path
+	g.nodes[n1].Paths[n2] = path
+	g.nodes[n2].Paths[n1] = path
 	return nil
 }
 
@@ -199,7 +206,7 @@ func (g *Graph) identifyNode(ident any) (int, error) {
 		if idx, ok = ident.(int); !ok {
 			return 0, fmt.Errorf("int identifier expected for anonymous nodes; '%v' is a %T", ident, ident)
 		}
-		if _, exists := g.Nodes[idx]; !exists {
+		if _, exists := g.nodes[idx]; !exists {
 			return 0, fmt.Errorf("index %d does not exist in graph", idx)
 		}
 	
@@ -240,7 +247,7 @@ func (g *Graph) addPath(src, dest int, weight int, directed bool, key string) *P
 func (g *Graph) Neighbours(index int) []int {
 	result := []int{}
 
-	for idx := range g.Nodes[index].Paths {
+	for idx := range g.nodes[index].Paths {
 		result = append(result, idx)
 	}
 
@@ -273,4 +280,21 @@ func (g *Graph) Keys() []string {
 			keys = append(keys, key)
 	}
 	return keys
+}
+
+// SetAllNodeValues() sets the value of all nodes in the graph
+func (g *Graph) SetAllNodeValues(value any) {
+	for _, node := range(g.nodes) {
+		node.Value = value
+	}
+}
+
+// SetNodeValue() sets the value of the specified node
+func (g *Graph) SetNodeValue(index int, value any) {
+	g.nodes[index].Value = value
+}
+
+// NodeValue() returns the value of the specified node
+func (g *Graph) NodeValue(index int) any {
+	return g.nodes[index].Value
 }

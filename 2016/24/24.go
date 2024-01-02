@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"os"
 
@@ -9,15 +10,9 @@ import (
 	"github.com/pjsoftware/advent-of-code/2016/lib/graph"
 )
 
-type Dir struct {
-	X,Y int
-}
-
-var Directions = []*Dir{
-	{0,1},	// Up
-	{0,-1},	// Down
-	{-1,0},	// Left
-	{1,0},	// Right
+type DijkstraData struct {
+  Distance int
+  Visited bool
 }
 
 func main() {
@@ -63,10 +58,18 @@ func Solve(maze []string) int {
   }
 
   seen := make(map[string]bool)
-  for  _, name := range names {
-    seen[name] = true
-    idx, _ := g1.NodeByName(name)
-    fmt.Printf("Name: %s (%d)\n", name, idx)
+  for  _, source := range names {
+    seen[source] = true
+    src, _ := g1.NodeByName(source)
+    FindShortestDistancesFrom(g1, src)
+
+    for _, target := range names {
+      if seen[target] { continue }
+      tgt, _ := g1.NodeByName(target)
+      tv := nodeValue(g1, tgt)
+      fmt.Printf("Distance from %s to %s: %d\n", source, target, tv.Distance)
+      g2.AddPathBetween(source, target, tv.Distance)
+    }
   }
   return 0
 }
@@ -97,7 +100,8 @@ func ConvertToGraph(maze []string) *graph.Graph {
       } else {
         name = string(cell)
       }
-      g.AddIdentifiedNode(key,name,math.MaxInt)
+      dv := &DijkstraData{Distance: math.MaxInt, Visited: false}
+      g.AddIdentifiedNode(key,name, *dv)
     }
   }
 
@@ -115,4 +119,70 @@ func ConvertToGraph(maze []string) *graph.Graph {
 
 func generateKey(x, y int) string {
   return fmt.Sprintf("(%d,%d)", x, y)
+}
+
+// FindShortestDistancesFrom() implements Dijkstra's Algorithm to generate a
+// Shortest Path Tree, calculating the shortest paths to all nodes from the
+// specified starting node. It is called once for each named node, allowing us
+// to construct a new graph consisting only of the named nodes and the distances
+// between them!
+func FindShortestDistancesFrom(g *graph.Graph, index int) {
+  resetNodeValues(g, math.MaxInt, false)
+  setNodeValue(g, index, 0, false)
+
+  for {
+    idx, err := getNextNode(g)
+    if err != nil { return }
+
+    cv := nodeValue(g, idx)
+    setNodeValue(g, idx, cv.Distance, true)
+    neighbours := g.Neighbours(idx)
+    for _, node := range neighbours {
+      nv := nodeValue(g, node)
+      dist := cv.Distance+1
+      if !nv.Visited && nv.Distance > dist {
+        setNodeValue(g, node, dist, false)
+      }
+    }
+  }
+}
+
+func nodeValue(g *graph.Graph, index int) DijkstraData {
+  var xv DijkstraData
+  var ok bool
+  x := g.NodeValue(index)
+  if xv, ok = x.(DijkstraData); !ok {
+    log.Fatalf("DijkstraData identifier expected from NodeValue(); '%v' is a %T", x, x)
+  }
+  return xv
+}
+
+func resetNodeValues(g *graph.Graph, distance int, visited bool) {
+  dv := &DijkstraData{Distance: distance, Visited: visited}
+  g.SetAllNodeValues(*dv)
+}
+
+func setNodeValue(g *graph.Graph, index int, distance int, visited bool) {
+  dv := &DijkstraData{Distance: distance, Visited: visited}
+  g.SetNodeValue(index, *dv)
+}
+
+func getNextNode(g *graph.Graph) (int, error) {
+  allNodes := g.Nodes()
+  found := false
+  dist := math.MaxInt
+  var rv int
+  for _, node := range allNodes {
+    nv := nodeValue(g, node)
+    if nv.Visited { continue }
+    if nv.Distance < dist {
+      rv = node
+      found = true
+      dist = nv.Distance
+    }
+  }
+  if found {
+    return rv, nil
+  }
+  return -1, fmt.Errorf("all nodes have been visited")
 }
