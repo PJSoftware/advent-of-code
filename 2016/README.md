@@ -26,3 +26,4 @@
 - [Day 22](./22/README-22.md) - Grid Computing
 - [Day 23](./23/README-23.md) - Safe Cracking
 - [Day 24](./24/README-24.md) - Air Duct Spelunking
+- [Day 25](./25/README-25.md) - Clock Signal

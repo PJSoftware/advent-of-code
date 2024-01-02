@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-const VERSION string = "1.1.0"
+const VERSION string = "1.2.0"
 
 type Register map[string]int
 
@@ -19,6 +19,10 @@ type Interpreter struct {
 	DNR   bool
 	re    map[string]*regexp.Regexp
 	debug bool
+	output []int
+	maxOut int
+	isClock bool
+	testClock bool
 }
 
 func init() {
@@ -38,6 +42,8 @@ func NewInterpreter(code []string) *Interpreter {
 	ai.steps = 0
 	ai.DNR = false
 	ai.debug = false
+	ai.output = []int{}
+	ai.testClock = false
 
 	// Build expected regexp pattern
 	ai.re = make(map[string]*regexp.Regexp)
@@ -47,11 +53,19 @@ func NewInterpreter(code []string) *Interpreter {
 	ai.re["inc"] = regexp.MustCompile("inc "+regName)
 	ai.re["dec"] = regexp.MustCompile("dec "+regName)
 	ai.re["tgl"] = regexp.MustCompile("tgl "+regValue)
+	ai.re["out"] = regexp.MustCompile("out "+regValue)
 
 	ai.re["cpy"] = regexp.MustCompile("cpy "+regValue+" "+regName)
 	ai.re["jnz"] = regexp.MustCompile("jnz "+regValue+" "+regValue)
 	
 	return ai
+}
+
+
+func (ai *Interpreter) TestClock(numTicks int) {
+	ai.maxOut = numTicks
+	ai.isClock = true
+	ai.testClock = true
 }
 
 func (ai *Interpreter) Debug() {
@@ -81,7 +95,10 @@ func (ai *Interpreter) NextInstruction() (string, string, string) {
 }
 
 // ai.Run() runs the code in the interpreter, returning the total number of
-// steps processed
+// steps processed.
+//
+// For v1.2.0+, if TestClock() has been called, Run() will return a 1 if the code
+// appears to implement a clock; otherwise it will return 0
 func (ai *Interpreter) Run() int {
 	if ai.DNR {
 		log.Fatalf("This program has already been run and cannot be run again")
@@ -94,6 +111,7 @@ func (ai *Interpreter) Run() int {
 		case "inc": ai.inc(p1)
 		case "dec": ai.dec(p1)
 		case "tgl": ai.tgl(p1)
+		case "out": ai.out(p1)
 
 		case "cpy": ai.cpy(p1,p2)
 		case "jnz": ai.jnz(p1,p2)
@@ -103,6 +121,16 @@ func (ai *Interpreter) Run() int {
 			log.Fatalf("Unknown instruction '%s' at line %d", inst, ai.index+1)
 		}
 		ai.steps++
+		
+		if ai.testClock {
+			if !ai.isClock {
+				return 0
+			}
+			if len(ai.output) > ai.maxOut {
+				return 1
+			}
+		}
+
 		if ai.debug && ai.steps%1000000 == 0 {
 			fmt.Printf("DEBUG: steps %dM | index = %d | reg = %d,%d,%d,%d\n", int(ai.steps/1000000), ai.index, ai.reg["a"], ai.reg["b"], ai.reg["c"], ai.reg["d"])
 		}
@@ -123,6 +151,7 @@ func (ai *Interpreter) progDump() {
 		}
 	}
 }
+
 func (ai *Interpreter) inc(p1 string) {
 	ai.reg[p1]++
 	ai.index++
@@ -130,6 +159,15 @@ func (ai *Interpreter) inc(p1 string) {
 
 func (ai *Interpreter) dec(p1 string) {
 	ai.reg[p1]--
+	ai.index++
+}
+
+func (ai *Interpreter) out(p1 string) {
+	val := ai.extractVal(p1)
+	ai.output = append(ai.output, val)
+	if ai.testClock && ai.isClock {
+		ai.isClock = (len(ai.output)%2 == 1-val)
+	}
 	ai.index++
 }
 
@@ -151,8 +189,9 @@ func (ai *Interpreter) tgl(p1 string) {
 		case "tgl": newInst = "inc"
 		case "jnz": newInst = "cpy"
 		case "cpy": newInst = "jnz"
+
+		case "out": newInst = "out" // until told otherwise, out not supported by tgl
 	}
-	// fmt.Printf("tgl command > changing %d: '%s' to '%s%s'\n\n", tglIndex, line, newInst, param)
 	ai.code[tglIndex] = newInst + param
 	 
 	ai.index++
