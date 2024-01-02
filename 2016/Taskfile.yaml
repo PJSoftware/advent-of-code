@@ -109,3 +109,7 @@ tasks:
   24:
     cmds:
       - go run ./2016/24
+
+  25:
+    cmds:
+      - go run ./2016/25
