@@ -1,1 +1,8 @@
-.vscode/
+## General
+*.exe
+*.pdb
+
+## Rust
+*.pdb
+cargo.lock
+target/

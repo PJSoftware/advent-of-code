@@ -5,6 +5,7 @@ version: "3"
 includes:
   2015: ./2015/Taskfile.yaml
   2016: ./2016/Taskfile.yaml
+  2017: ./2017/Taskfile.yaml
 
 vars:
   YEAR: 2016

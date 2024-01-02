@@ -8,6 +8,7 @@ Be warned that the solution to each day's puzzle will be in my commit message --
 
 - [Advent of Code: 2015](https://adventofcode.com/2015) / [My Solutions](./2015/README.md) / [Perl](./doc/languages/Perl.md)
 - [Advent of Code: 2016](https://adventofcode.com/2016) / [My Solutions](./2016/README.md) / [Golang](./doc/languages/Go.md)
+- [Advent of Code: 2017](https://adventofcode.com/2017) / [My Solutions](./2017/README.md) / [Rust](./doc/languages/Rust.md)
 
 ## Algorithms and Data Structures
 
