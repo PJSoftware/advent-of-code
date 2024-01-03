@@ -37,40 +37,16 @@ impl Test {
 
 // Data code
 
-pub struct Data {
-  string: String,
+pub fn read_string(filename: &str) -> String {
+  let data = fs::read_to_string(filename);
+  return data.expect("Unable to read file");
 }
 
-impl Data {
-  pub fn new() -> Data {
-    Data {
-      string: String::new(),
-    }
-  }
 
-  pub fn read_string(&mut self, filename: &str) {
-    let data = fs::read_to_string(filename);
-    self.string = data.expect("Unable to read file");
-  }
-
-  pub fn string(&mut self) -> String {
-    return self.string.clone();
-  }
-  
+pub fn read_strings(filename: &str) -> Vec<String> {
+  fs::read_to_string(filename) 
+      .unwrap()  // panic on possible file-reading errors
+      .lines()  // split the string into an iterator of string slices
+      .map(String::from)  // make each slice into a string
+      .collect()  // gather them together into a vector
 }
-
-// func inputFile(num string) string {
-// 	pwd := os.Getenv("PWD")
-// 	return fmt.Sprintf("%s/2016/%s/%s-input.txt", pwd, num, num)
-// }
-
-// // InputString reads the contents of the input file as a single string
-// func InputString(num string) string {
-// 	fn := inputFile(num)
-// 	b, err := os.ReadFile(fn)
-// 	if err != nil {
-// 		log.Fatalf("error reading '%s': %v", fn, err)
-// 	}
-
-// 	return string(b)
-// }

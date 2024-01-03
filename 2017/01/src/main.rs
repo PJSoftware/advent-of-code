@@ -35,10 +35,9 @@ fn main() {
 
   // Solution
 
-  let mut data = advent::Data::new();
-  data.read_string("01-input.txt");
-  let solution1 = captcha1(&data.string());
-  let solution2 = captcha2(&data.string());
+  let input = advent::read_string("01-input.txt");
+  let solution1 = captcha1(&input);
+  let solution2 = captcha2(&input);
   println!("Solution 1: {}", solution1);
   println!("Solution 2: {}", solution2);
 }
