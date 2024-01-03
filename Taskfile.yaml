@@ -8,7 +8,7 @@ includes:
   2017: ./2017/Taskfile.yaml
 
 vars:
-  YEAR: 2016
+  YEAR: 2017
 
 tasks:
   default:
