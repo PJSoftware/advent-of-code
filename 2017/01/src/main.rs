@@ -29,5 +29,13 @@ fn main() {
 }
 
 fn solve(data: &str) -> i32 {
-  return data.len() as i32;
+  let mut captcha = 0 as i32;
+  let mut comp = data.chars().last().unwrap();
+  for ch in data.chars() {
+    if comp == ch {
+      captcha += ch.to_digit(10).unwrap_or(0) as i32;
+    }
+    comp = ch
+  }
+  return captcha;
 }
