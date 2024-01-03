@@ -3,6 +3,11 @@
 version: "3"
 
 tasks:
+  hw:
+    dir: ./2015/hw
+    cmds:
+      - perl ./hw.pl
+
   slow:
     internal: true
     cmds:
