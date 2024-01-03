@@ -3,6 +3,10 @@
 version: "3"
 
 tasks:
+  hw:
+    cmds:
+      - go run ./2016/hw
+
   slow:
     internal: true
     cmds:
