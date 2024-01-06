@@ -60,6 +60,7 @@ sub append_task {
   print $FILE "  $day:\n";
   print $FILE "    dir: ./$YEAR/$day\n";
   print $FILE "    cmds:\n";
+  print $FILE "      - clear\n";
   print $FILE "      - cargo run\n";
   close $FILE;
 }

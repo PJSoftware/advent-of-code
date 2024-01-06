@@ -20,9 +20,8 @@ fn main() {
 
   // Solution
 
-  let mut data = advent::Data::new();
-  data.read_string("NN-input.txt");
-  let solution = solve(&data.string());
+  let input = advent::read_string("NN-input.txt");
+  let solution = solve(&input);
   println!("Solution: {}", solution);
 }
 
