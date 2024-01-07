@@ -24,3 +24,9 @@ tasks:
     cmds:
       - clear
       - cargo run
+
+  03:
+    dir: ./2017/03
+    cmds:
+      - clear
+      - cargo run

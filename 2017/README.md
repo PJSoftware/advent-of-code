@@ -4,3 +4,4 @@
 
 - [Day 1](./01/README-01.md) - Inverse Captcha
 - [Day 2](./02/README-02.md) - Corruption Checksum
+- [Day 3](./03/README-03.md) - Spiral Memory

@@ -38,10 +38,14 @@ impl Test {
 // Data code
 
 pub fn read_string(filename: &str) -> String {
-  let data = fs::read_to_string(filename);
-  return data.expect("Unable to read file");
+  let data = fs::read_to_string(filename).expect("Unable to read file");
+  return data;
 }
 
+pub fn read_i32(filename: &str) -> i32 {
+  let data = fs::read_to_string(filename).expect("Unable to read file");
+  return data.parse::<i32>().unwrap();
+}
 
 pub fn read_strings(filename: &str) -> Vec<String> {
   fs::read_to_string(filename) 
