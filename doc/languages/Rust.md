@@ -54,3 +54,9 @@ let c = a;
 ```
 
 I think...?
+
+## For Loops
+
+In Rust, `for i in 1..5` produces `1,2,3,4`, not `1,2,3,4,5` as you might expect. I know there are other languages which also do this -- and I hate it in those languages too!
+
+Of course, I'm used to Perl's `for $i (1..5)` which does produce the expected `1,2,3,4,5`!
