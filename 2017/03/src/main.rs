@@ -32,34 +32,61 @@ fn main() {
   println!("Manhattan Distance: {}", solution);
 }
 
-fn manhattan_distance(data: i32) -> i32 {
-  let root = f32::sqrt(data as f32) as i32;
-  let mut extra = data - root * root;
-  
-  let mut x: i32;
-  let mut y: i32;
-  if root%2 == 0 {
-    y = root/2 - 1;
-    x = root/2; // actually "-root/2" but let's just use absolutes to simplify
-  } else {
-    y = (root-1)/2;
-    x = y;
-  }
-  
-  println!("For {}, we are {} beyond {}^2", data, extra, root);
-  if extra > 0 {
-    x += 1;
-    extra -= 1;
-  }
+fn manhattan_distance(mut data: i32) -> i32 {
+  let mut d1 = 1;
+  let mut d2 = 1;
 
-  if extra <= root {
-    y -= extra;
-    println!("<= root Coord: ({},{})", x, y)
-  } else {
-    extra -= root;
-    x -= extra;
-    println!("> root Coord: ({},{})", x, y)
+  let mut x = 0;
+  let mut y = 0;
+
+  data -= 1;
+
+  while data > 0 {
+
+    // Right
+    if data < d1 {
+      d1 = data;
+    }
+    x += d1;
+    data -= d1;
+    if data == 0 {
+      break;
+    }
+    d1 += 1;
+
+    // Up
+    if data < d2 {
+      d2 = data;
+    }
+    y += d2;
+    data -= d2;
+    if data == 0 {
+      break;
+    }
+    d2 += 1;
+
+    // Left
+    if data < d1 {
+      d1 = data;
+    }
+    x -= d1;
+    data -= d1;
+    if data == 0 {
+      break;
+    }
+    d1 += 1;
+
+    // Down
+    if data < d2 {
+      d2 = data;
+    }
+    y -= d2;
+    data -= d2;
+    if data == 0 {
+      break;
+    }
+    d2 += 1;
+
   }
-  
   return x.abs() + y.abs();
 }
