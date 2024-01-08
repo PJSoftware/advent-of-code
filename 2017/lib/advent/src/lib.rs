@@ -25,6 +25,16 @@ impl Test {
     }
   }
 
+  pub fn test_bool(&mut self, label: &str, exp: bool, got: bool) {
+    self.run += 1;
+    if got == exp {
+      println!("OK -- '{}' => {} / passed", label, got);
+    } else {
+      println!("FAIL -- '{}' / failed;\n  - exp '{}';\n  - got '{}'", label, exp, got);
+      self.failed += 1;
+    }
+  }
+
   pub fn bail_on_fail(&mut self) {
     if self.failed > 0 {
       println!("\nSample Data Tests: {}/{} failed\n", self.failed, self.run);
