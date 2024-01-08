@@ -2,7 +2,7 @@
 
 use strict;
 
-use lib 'C:/_lib/perl';
+use lib "./bin/lib";
 use Git;
 
 my $cb = Git::branch_current();
