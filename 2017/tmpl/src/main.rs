@@ -20,7 +20,7 @@ fn main() {
 
   // Solution
 
-  let input = advent::read_string("NN-input.txt");
+  let input = advent::read_string("input.txt");
   let solution = solve(&input);
   println!("Solution: {}", solution);
 }

@@ -42,3 +42,9 @@ tasks:
     cmds:
       - clear
       - cargo run
+
+  06:
+    dir: ./2017/06
+    cmds:
+      - clear
+      - cargo run

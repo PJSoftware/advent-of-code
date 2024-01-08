@@ -33,7 +33,7 @@ system("git checkout -b day$DAY");
 
 sub gen_input {
   my $day = shift;
-  open my $FILE,'>',"$YEAR/$day/$day-input.txt";
+  open my $FILE,'>',"$YEAR/$day/input.txt";
   close $FILE;
 }
 
