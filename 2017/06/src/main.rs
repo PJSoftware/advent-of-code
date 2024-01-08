@@ -18,7 +18,9 @@ fn main() {
     let label = format!("input: {}", key);
     test.test_string(&label, *val, &next_cycle(key));
   }
-  test.test_i32("cycles before repeat", 5, count_cycles("0 2 7 0"));
+  let test_result = count_cycles("0 2 7 0");
+  test.test_i32("cycles before repeat", 5, test_result.0);
+  test.test_i32("cycles in loop", 4, test_result.1);
   test.bail_on_fail();
   println!("All tests passed!\n");
 
@@ -26,7 +28,8 @@ fn main() {
 
   let input = advent::read_string("input.txt");
   let solution = count_cycles(&input);
-  println!("Solution: {}", solution);
+  println!("Solution: {}", solution.0);
+  println!("Loop size: {}", solution.1);
 }
 
 fn next_cycle(data: &str) -> String {
@@ -51,15 +54,15 @@ fn next_cycle(data: &str) -> String {
   return vec_to_string(vec);
 }
 
-fn count_cycles(data: &str) -> i32 {
-  let mut seen: HashMap<String, bool> = Default::default();
+fn count_cycles(data: &str) -> (i32, i32) {
+  let mut seen: HashMap<String, i32> = Default::default();
   let mut count = 0;
   let mut next = String::from(data);
   loop {
     if seen.contains_key(&next) {
-      return count;
+      return (count, count-seen[&next]);
     }
-    seen.insert(next.clone(), true);
+    seen.insert(next.clone(), count);
     next = next_cycle(&next);
     count += 1;
   }
