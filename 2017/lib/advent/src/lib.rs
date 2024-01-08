@@ -64,3 +64,13 @@ pub fn read_strings(filename: &str) -> Vec<String> {
       .map(String::from)  // make each slice into a string
       .collect()  // gather them together into a vector
 }
+
+pub fn read_i32s(filename: &str) -> Vec<i32> {
+  let lines = read_strings(filename);
+  let mut vec = Vec::new();
+  for line in lines {
+    let value = line.parse::<i32>().unwrap();
+    vec.push(value);
+  }
+  vec
+}
