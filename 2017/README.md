@@ -8,3 +8,4 @@
 - [Day 4](./04/README-04.md) - High-Entropy Passphrases
 - [Day 5](./05/README-05.md) - A Maze of Twisty Trampolines, All Alike
 - [Day 6](./06/README-06.md) - Memory Reallocation
+- [Day 7](./07/README-07.md) - Recursive Circus

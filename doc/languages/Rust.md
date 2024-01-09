@@ -33,9 +33,16 @@ new language) but _yikes_! It's (almost) enough to make me switch back to
 
 ## Borrowing
 
-Okay. The whole [Ownership/Borrowing](https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html) thing is definitely going to be one of my biggest stumbling blocks until I fully _grok_ it.
+Okay. The whole
+[Ownership/Borrowing](https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html)
+thing is definitely going to be one of my biggest stumbling blocks until I fully
+_grok_ it.
 
-Integers (and `float`s, `bool`s, `char`s, etc) are easily copied -- because they are on the stack. But a `String` (not to be confused with a `&str`, which may or may not be similar to a `&String`!) is on the heap, and therefore is slow to copy, so by default copying is disabled, and using a String in your code **moves** it -- or rather, moves ownership of it.
+Integers (and `float`s, `bool`s, `char`s, etc) are easily copied -- because they
+are on the stack. But a `String` (not to be confused with a `&str`, which may or
+may not be similar to a `&String`!) is on the heap, and therefore is slow to
+copy, so by default copying is disabled, and using a String in your code
+**moves** it -- or rather, moves ownership of it.
 
 All of this means that the following is okay:
 
@@ -57,6 +64,44 @@ I think...?
 
 ## For Loops
 
-In Rust, `for i in 1..5` produces `1,2,3,4`, not `1,2,3,4,5` as you might expect. I know there are other languages which also do this -- and I hate it in those languages too!
+In Rust, `for i in 1..5` produces `1,2,3,4`, not `1,2,3,4,5` as you might
+expect. I know there are other languages which also do this -- and I hate it in
+those languages too!
 
-Of course, I'm used to Perl's `for $i (1..5)` which does produce the expected `1,2,3,4,5`!
+Of course, I'm used to Perl's `for $i (1..5)` which does produce the expected
+`1,2,3,4,5`!
+
+## Linked Lists, Graphs, etc
+
+"_Rust is known to be notorious difficult when it comes to certain data
+structures like linked lists, trees, etc. Many of such data structures have in
+common the necessity of several variables pointing to one value. For instance in
+a graph, two vertices could have a connection to a shared vertex. But when
+removing just one of these vertices, the shared vertex should not be dropped. In
+other words, none of these vertices can own the shared vertex in the strict
+sense._"
+
+## Conclusion
+
+I'm really not a fan of Rust.
+
+My understanding is it was developed to solve certain specific problems inherent
+in `C`/`C++` -- but in the process it has made itself even more difficult to
+manage.
+
+I found this quote somewhere else: "It should be noted that the _authentic_ Rust
+learning experience involves writing code, having the compiler scream at you,
+and trying to figure out what the heck that means. I will be carefully ensuring
+that this occurs as frequently as possible. Learning to read and understand
+Rust's generally excellent compiler errors and documentation is _incredibly_
+important to being a productive Rust programmer." To some degree this is true of
+learning most languages -- and some have decidedly less useful error messages
+than `Rust` does -- but I always feel that Rust is yelling at me for not
+understanding some bizarre, complicated data management incantation that has
+been invented purely to make life more difficult.
+
+TL/DR: I like `Go`; I do not like `Rust`.
+
+I seriously considered switching away from `Rust` to something else on:
+
+- [Day 07](../../2017/07/README-07.md) (linked lists too complicated to use!)
