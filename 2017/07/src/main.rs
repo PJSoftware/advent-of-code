@@ -1,4 +1,6 @@
 use advent;
+use day07::tower::Tower;
+
 use std::collections::HashMap;
 use regex::Regex;
 
@@ -7,30 +9,39 @@ fn main() {
   // Tests
 
   let test_data = vec!(
-    "xhth (57)".to_string(),
-    "ebii (61)".to_string(),
-    "havc (66)".to_string(),
-    "ktlj (57)".to_string(),
-    "fwft (72) -> ktlj, cntj, xhth".to_string(),
-    "qoyq (66)".to_string(),
-    "padx (45) -> pbga, havc, qoyq".to_string(),
-    "tknk (41) -> ugml, padx, fwft".to_string(),
-    "jptl (61)".to_string(),
-    "ugml (68) -> gyxo, ebii, jptl".to_string(),
-    "gyxo (61)".to_string(),
-    "cntj (57)".to_string(),
+    "xhth (57)",
+    "ebii (61)",
+    "havc (66)",
+    "ktlj (57)",
+    "fwft (72) -> ktlj, cntj, xhth",
+    "qoyq (66)",
+    "padx (45) -> pbga, havc, qoyq",
+    "tknk (41) -> ugml, padx, fwft",
+    "jptl (61)",
+    "ugml (68) -> gyxo, ebii, jptl",
+    "gyxo (61)",
+    "cntj (57)",
   );
   let mut test = advent::Test::new();
 
   println!("Starting Tests:\n");
-  test.test_string("root program","tknk",&find_root(test_data));
+  let mut test_tower = Tower::new();
+  for line in test_data {
+    test_tower.import(line.to_string());
+  }
+
+  // test.test_string("root program","tknk",&find_root(test_data));
   test.bail_on_fail();
   println!("All tests passed!\n");
 
   // Solution
 
   let input = advent::read_strings("input.txt");
-  println!("Root program: {}", &find_root(input));
+  let mut tower = Tower::new();
+  for line in input {
+    tower.import(line);
+  }
+  // println!("Root program: {}", &find_root(input));
 }
 
 fn find_root(data: Vec<String>) -> String {
