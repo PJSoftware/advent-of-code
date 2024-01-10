@@ -13,6 +13,11 @@ tasks:
     cmds:
       - perl ./bin/slow-runner.pl
 
+  edit:
+    desc: Open specified rust project directly in editor (task commit1 -- NN)
+    cmds:
+      - code 2017/{{.CLI_ARGS}}
+
   01:
     dir: ./2017/01
     cmds:
