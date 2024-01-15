@@ -71,7 +71,7 @@ In this example, `tknk` is at the bottom of the tower (the bottom program), and 
 
 Before you're ready to help them, you need to make sure your information is correct. **What is the name of the bottom program?**
 
-### Thoughts on Part One
+### Thoughts on Part One (Rust Edition)
 
 - My first thought was to implement our data structure as a graph -- which is, ultimately, overkill for our current requirements, but may still become relevant at some point.
 - Then I considered something along the lines of a linked list thingy, but reading [Learning Rust With Entirely Too Many Linked Lists](https://rust-unofficial.github.io/too-many-lists/) caused me to rethink that approach. (Note however, this linked list tutorial looks like it will be incredibly helpful to work through in our attempt to figure out Rust!)
@@ -80,3 +80,4 @@ Before you're ready to help them, you need to make sure your information is corr
 - This is the point at which I started to rethink my life choices, specifically the choice to use **Rust**.
   - Rust is focussed on generating "safe" code -- but "safe" specifically means its data is not corruptible. It does not mean our code is less likely to crash.
   - So ... is it a language I really need? It seems to require jumping through way too many hoops just to achieve something that would be simple in other languages.
+- Ultimately I opted to switch to [Ruby](../../doc/languages/Ruby.md) because **Part Two** just proved to be too difficult (and too _painful_) to implement in Rust. Our Rust implementation of PArt One can be found [here](./attempt-in-rust/), but we shall rewrite it in Ruby and proceed from there!

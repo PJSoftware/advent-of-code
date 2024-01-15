@@ -50,7 +50,7 @@ sub gen_md {
 
 sub gen_code {
   my $day = shift;
-  system("cp -r $YEAR/tmpl/* $YEAR/$day")
+  system("cp $YEAR/tmpl/script.rb $YEAR/$day.rb")
 }
 
 sub append_task {
@@ -60,8 +60,7 @@ sub append_task {
   print $FILE "  $day:\n";
   print $FILE "    dir: ./$YEAR/$day\n";
   print $FILE "    cmds:\n";
-  print $FILE "      - clear\n";
-  print $FILE "      - cargo run\n";
+  print $FILE "      - ruby $day.rb\n";
   close $FILE;
 }
 
