@@ -10,7 +10,8 @@ if (!defined $ARGV[1]) {
 }
 
 my $YEAR = $ARGV[0];
-my $DAY = $ARGV[1];
+my $LANG = $ARGV[1];
+my $DAY = $ARGV[2];
 
 if (-d "$YEAR/$DAY") {
   print "$YEAR/$DAY already exists; skipping!\n";
@@ -50,7 +51,7 @@ sub gen_md {
 
 sub gen_code {
   my $day = shift;
-  system("cp $YEAR/tmpl/script.rb $YEAR/$day.rb")
+  system("cp $YEAR/tmpl/$LANG/script.rb $YEAR/$day.rb")
 }
 
 sub append_task {

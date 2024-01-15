@@ -17,7 +17,7 @@ test_data.each do |input, answer|
   tests.test("sample: #{input}", answer, solve(input))
 end
 tests.bail_on_fail()
-puts "All tests passed!"
+puts "All tests passed!\n---"
 
 input = Read::string("input.txt")
 puts "Solution: #{solve(input)}"

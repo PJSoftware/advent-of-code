@@ -3,12 +3,12 @@ require_relative "../lib/advent/test"
 
 require_relative "tower"
 
-def find_root(input)
+def construct_from(input)
   tower = Tower.new()
   input.each do |prog|
     tower.add(prog)
   end
-  return tower.root_name
+  return tower
 end
 
 # Like Rust, Ruby prefers snake_case; unlike Go's camelCase
@@ -31,9 +31,17 @@ test_data = Array[
 tests = Test.new()
 
 puts "Starting Tests:"
-tests.test("root of test data", "tknk", find_root(test_data))
+test_tower = construct_from(test_data)
+tests.test("root of test data", "tknk", test_tower.root_name)
+puts "Weight of test tower: #{test_tower.total_weight}"
+name, weight = test_tower.balance()
+tests.test("balance #{name}", 60, weight)
 tests.bail_on_fail()
-puts "All tests passed!"
+puts "All tests passed!\n---"
 
 input = Read.strings("input.txt")
-puts "Solution: #{find_root(input)}"
+tower = construct_from(input)
+puts "Solution: #{tower.root_name}"
+puts "Weight of tower: #{tower.total_weight}"
+name, weight = tower.balance()
+puts "Balance #{name}; set to: #{weight}"

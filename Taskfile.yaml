@@ -9,6 +9,7 @@ includes:
 
 vars:
   YEAR: 2017
+  LANG: ruby
 
 tasks:
   default:
@@ -34,4 +35,4 @@ tasks:
   new:
     desc: Generate branch for new day NN (task new -- NN)
     cmds:
-      - perl ./bin/gen-new-framework.pl {{.YEAR}} {{.CLI_ARGS}}
+      - perl ./bin/gen-new-framework.pl {{.YEAR}} {{.LANG}} {{.CLI_ARGS}}
