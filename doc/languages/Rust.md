@@ -1,5 +1,21 @@
 # Rust
 
+## Conclusion
+
+After tackling the Day 01-06 puzzles of [2017](../../2017/README.md), and
+wrestling with [Day 07](../../2017/07/README-07.md) for far too long, trying to
+do something which should have been easy, I've officially added `Rust` to my
+**no thanks** list. It just feels like it has been intentionally made
+_difficult_. Given how good the compiler is at reporting on the errors, my
+preference would be to simplify the language and have the compiler simply do the
+right thing.
+
+Maybe I shall return to it at some point ... or maybe not. Life is too short!
+
+The remaining [2017](../../2017/README.md) puzzles, I shall switch to [Ruby](./Ruby.md).
+
+## Getting Started
+
 Programming in a Windows environment has its own special set of challenges; for
 instance, I have several different versions of Perl installed for the several
 different development environments I've tinkered with in the last year or so.
@@ -81,7 +97,7 @@ removing just one of these vertices, the shared vertex should not be dropped. In
 other words, none of these vertices can own the shared vertex in the strict
 sense._"
 
-## Conclusion
+## Final Thoughts
 
 I'm really not a fan of Rust.
 
@@ -105,3 +121,5 @@ TL/DR: I like `Go`; I do not like `Rust`.
 I seriously considered switching away from `Rust` to something else on:
 
 - [Day 07](../../2017/07/README-07.md) (linked lists too complicated to use!)
+
+(Spoiler alert: yup. Did it!)

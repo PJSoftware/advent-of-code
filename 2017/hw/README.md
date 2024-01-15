@@ -1,4 +1,6 @@
-# Rust Hello World
+# Rust vs Ruby
+
+## Rust
 
 Creating a new Rust project is done with `cargo`. This folder was created by
 using the command `cargo new 2017/hw` -- and by default, the `main.rs` folder
@@ -12,7 +14,7 @@ Additionally, using `cargo` allows us to simply `cargo run` rather than the
 `rustc main.rs`, `./main.exe` we would use otherwise. We need to add the
 `target/` folder and `cargo.lock` to our `.gitignore` file.
 
-## Crates
+### Crates
 
 To move the _print_ statement into a separate module ("crate"), we need to do a
 little more.
@@ -36,3 +38,12 @@ had a test; something else to learn about!
 
 But for now, our `Hello World` program with modules (or packages, or crates?)
 works.
+
+## Ruby
+
+The Ruby **Hello World** is quite possibly the simplest version so far. It makes
+Rust's approach seem positively bloated.
+
+Even `Go` requires the correct `mod` setup, and `Perl` requires manipulation of
+our `lib` search path to find local modules. But `Ruby` just uses
+`require_relative` and it's done!
