@@ -15,3 +15,4 @@
 
 - [Day 7](./07/README-07.md) - Recursive Circus
 - [Day 8](./08/README-08.md) - I Heard You Like Registers
+- [Day 9](./09/README-09.md) - Stream Processing
