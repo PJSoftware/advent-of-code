@@ -34,7 +34,10 @@ system("git checkout -b day$DAY");
 
 sub gen_input {
   my $day = shift;
-  open my $FILE,'>',"$YEAR/$day/input.txt";
+  open my $FILE,'>',"$YEAR/$day/input_data.txt";
+  close $FILE;
+  open my $FILE,'>',"$YEAR/$day/input_test.txt";
+  print $FILE "-- insert test data here --";
   close $FILE;
 }
 
@@ -51,7 +54,7 @@ sub gen_md {
 
 sub gen_code {
   my $day = shift;
-  system("cp $YEAR/tmpl/$LANG/script.rb $YEAR/$day.rb")
+  system("cp $YEAR/tmpl/$LANG/script.rb $YEAR/$day/$day.rb")
 }
 
 sub append_task {
