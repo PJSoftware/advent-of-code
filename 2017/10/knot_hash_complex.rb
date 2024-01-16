@@ -1,17 +1,19 @@
 class KnotHashC
 
-  def initialize(size, lengths)
+  def initialize(length_prefix)
     @skip = 0
 
     @list = Array.new
-    for i in 1..size do
+    for i in 1..256 do
       @list.push(i-1)
     end
 
     @lengths = Array.new
-    lengths.split(",").each do |len|
-      @lengths.push(len.to_i)
+    length_prefix.each_byte do |ch|
+      @lengths.push(ch)
     end
+    suffix = [17,31,73,47,23]
+    @lengths.push(*suffix)
 
     @tied = false
   end
@@ -23,12 +25,14 @@ class KnotHashC
     @tied = true
 
     index = 0
-    @lengths.each do |len|
-      final = index + len - 1
-      reverse(index, final)
-      index += len+@skip
-      index = wrap(index)
-      @skip += 1
+    for i in 1..64
+      @lengths.each do |len|
+        final = index + len - 1
+        reverse(index, final)
+        index += len+@skip
+        index = wrap(index)
+        @skip += 1
+      end
     end
   end
 
@@ -47,7 +51,23 @@ class KnotHashC
   end
 
   def checksum
-    return @list[0] * @list[1]
+    cs = ""
+    for i in 0..15
+      cs += hex_xor(i*16, i*16+15)
+    end
+    return cs
+  end
+
+  def hex_xor(first, last)
+    num = @list[first]
+    for i in first+1 .. last
+      num = num ^ @list[i]
+    end
+    hex = num.to_s(16)
+    if hex.length == 1
+      hex = "0" + hex
+    end
+    return hex
   end
 
   def wrap(index)
