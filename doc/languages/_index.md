@@ -2,11 +2,11 @@
 
 - [x] 2015: [Perl](./Perl.md)
 - [x] 2016: [Go](./Go.md)
-- [ ] 2017: [Rust](./Rust.md)
+- [ ] 2017 (days 1-6): [Rust](./Rust.md)
+- [ ] 2017 (days 7+): [Ruby](./Ruby.md)
 
 ## Possible Languages to Consider
 
-- [ ] Ruby
 - [ ] Python
 - [ ] C++
 - [ ] Nim
