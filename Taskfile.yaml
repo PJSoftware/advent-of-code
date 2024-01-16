@@ -17,6 +17,11 @@ tasks:
     cmds:
       - task --list-all
 
+  merge:
+    desc: Merge back to {{.YEAR}} branch
+    cmds:
+      - perl ./bin/merge.pl {{.YEAR}}
+
   commit0:
     desc: Commit preliminary puzzle data, test framework, etc
     cmds:

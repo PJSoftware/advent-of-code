@@ -9,6 +9,12 @@ def remove_garbage(stream)
   return stream.gsub(/\<[^>]*\>/,"")
 end
 
+def count_garbage_length(stream)
+  before = remove_cancelled(stream)
+  after = before.gsub(/\<[^>]*\>/,"<>")
+  return before.length - after.length
+end
+
 def score(stream)
   score = 0
   level = 0
@@ -29,7 +35,7 @@ def group_score(stream)
   return score(stream)
 end
 
-test_data = {
+test_streams = {
   "{}" => 1,
   "{{{}}}" => 6,
   "{{},{}}" => 5,
@@ -40,13 +46,27 @@ test_data = {
   "{{<a!>},{<a!>},{<a!>},{<ab>}}" => 3,
 }
 
+test_garbage = {
+  "<>" => 0,
+  "<random characters>" => 17,
+  "<<<<>" => 3,
+  "<{!>}>" => 2,
+  "<!!>" => 0,
+  "<!!!>>" => 0,
+  "<{o\"i!a,<{i<a>" => 10,
+}
+
 puts "Starting Tests:"
 tests = Test.new()
-test_data.each do |input, answer|
-  tests.test("test data #{input}", answer, group_score(input))
+test_streams.each do |input, answer|
+  tests.test("test stream #{input}", answer, group_score(input))
+end
+test_garbage.each do |input, answer|
+  tests.test("test garbage #{input}", answer, count_garbage_length(input))
 end
 tests.bail_on_fail()
 puts "All tests passed!\n---"
 
 input = Read::string("input_data.txt")
 puts "Solution: #{group_score(input)}"
+puts "Garbage: #{count_garbage_length(input)}"
