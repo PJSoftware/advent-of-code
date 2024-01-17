@@ -6,11 +6,13 @@ def solve(input)
 end
 
 puts "Starting Tests:"
-tests = Test.new()
+tests = Test.new
+
 test_input = Read::strings("input_test.txt")
 test_answer = 1
 tests.test("test data solution", test_answer, solve(test_input))
-tests.bail_on_fail()
+tests.bail_on_fail
+
 puts "All tests passed!\n---"
 
 input = Read::strings("input_data.txt")

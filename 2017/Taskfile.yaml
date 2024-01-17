@@ -82,3 +82,8 @@ tasks:
     dir: ./2017/10
     cmds:
       - ruby 10.rb
+
+  11:
+    dir: ./2017/11
+    cmds:
+      - ruby 11.rb
