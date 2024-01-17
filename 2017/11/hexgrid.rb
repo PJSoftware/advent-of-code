@@ -1,5 +1,7 @@
 class HexGrid
 
+  attr_reader :farthest
+
   # To model this grid we shall use cube coordinates per https://www.redblobgames.com/grids/hexagons/
   # q is N/S, with N positive (N is "0 deg" up the page)
   # r is SE/NW, with SE positive (SE is "120 deg" to the right of N)
@@ -11,6 +13,8 @@ class HexGrid
     @q = 0
     @r = 0
     @s = 0
+
+    @farthest = 0
   end
 
   def follow_path(path)
@@ -38,12 +42,16 @@ class HexGrid
         puts "WTF is '#{path}'?"
         exit 1
       end
+
+      cd = steps_from_origin
+      if cd > @farthest
+        @farthest = cd
+      end
     end
   end
 
   # I'm fairly sure this is not correct
   def steps_from_origin
-    puts "Coordinates: (#{@q},#{@r},#{@s})"
     return [@q.abs,@r.abs,@s.abs].max
   end
 

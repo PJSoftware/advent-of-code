@@ -29,3 +29,4 @@ input = Read::string("input_data.txt")
 hg = HexGrid.new
 hg.follow_path(input)
 puts "Solution: #{hg.steps_from_origin}"
+puts "Farthest: #{hg.farthest}"
