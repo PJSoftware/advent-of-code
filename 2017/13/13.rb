@@ -10,6 +10,10 @@ class Firewall
     @severity = 0
     @max_layer = 0
     @detected = false
+
+    @state_start = 0
+    @state_scanners = Hash.new
+    @state_saved = false
   end
 
   def add_scanner(data)
@@ -40,18 +44,43 @@ class Firewall
     end
   end
 
-  def passage_severity(start_at)
-    delay = start_at
-    
+  def restore_state(start_at)
+    if @state_saved
+      start_pos = @state_start
+      @scanners.each do |scanner|
+        scanner.position = @state_scanners[scanner.layer]
+      end
+      return start_at-start_pos
+    else
+      reset_scanners
+      return 0
+    end
+  end
+
+  def save_state(start_at)
+    @state_start = start_at
+    @scanners.each do |scanner|
+      @state_scanners[scanner.layer] = scanner.position
+    end
+    @state_saved = true
+  end
+
+  def set_state(start_at)
     @severity = 0
     @position = -1
     @detected = false
-    reset_scanners
 
+    delay = restore_state(start_at)
     while delay > 0
       delay -= 1
       tick
     end
+
+    save_state(start_at)
+  end
+
+  def passage_severity(start_at)
+    set_state(start_at)
     
     @position = 0
     while @position <= @max_layer
