@@ -41,6 +41,28 @@ class Group
       end
     end
   end
+
+  def number_groups(already_counted)
+    rv = already_counted
+
+    loop do
+      check = -1
+      @nodes.each do |node|
+        if !node.counted
+          check = node.id
+          break
+        end
+      end
+
+      if check == -1
+        return rv
+      else
+        rv += 1
+        count_connected(check)
+      end
+    end
+  end
+
 end
 
 class Node
@@ -76,11 +98,20 @@ puts "Starting Tests:"
 tests = Test.new
 
 test_input = Read::strings("input_test.txt")
-test_answer = 6
-tests.test("test data solution", test_answer, analyse_data(test_input))
+test_group = Group.new
+test_input.each do |data|
+  test_group.add_node(data)
+end
 
+tests.test("test data solution", 6, test_group.count_connected(0))
+tests.test("test num groups", 2, test_group.number_groups(1))
 tests.bail_on_fail
 puts "All tests passed!\n---"
 
 input = Read::strings("input_data.txt")
-puts "Solution: #{analyse_data(input)}"
+group = Group.new
+input.each do |data|
+  group.add_node(data)
+end
+puts "Connected: #{group.count_connected(0)}"
+puts "Group Count: #{group.number_groups(1)}"
