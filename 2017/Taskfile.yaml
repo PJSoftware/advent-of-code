@@ -92,3 +92,8 @@ tasks:
     dir: ./2017/12
     cmds:
       - ruby 12.rb
+
+  13:
+    dir: ./2017/13
+    cmds:
+      - ruby 13.rb
