@@ -22,17 +22,17 @@ tasks:
     cmds:
       - perl ./bin/merge.pl {{.YEAR}}
 
-  commit0:
+  setup:
     desc: Commit preliminary puzzle data, test framework, etc
     cmds:
       - perl ./bin/commit.pl
 
-  commit1:
+  part1:
     desc: Commit part 1 solution; must specify answer (task commit1 -- ANSWER)
     cmds:
       - perl ./bin/commit.pl 1 {{.CLI_ARGS}}
 
-  commit2:
+  part2:
     desc: Commit part 2 solution; must specify answer (task commit2 -- ANSWER)
     cmds:
       - perl ./bin/commit.pl 2 {{.CLI_ARGS}}
