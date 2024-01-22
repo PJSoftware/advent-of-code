@@ -2,11 +2,14 @@ require_relative "../lib/advent/read"
 require_relative "../lib/advent/test"
 
 class Firewall
+  attr_reader :detected
+
   def initialize
     @scanners = Array.new
     @position = -1
     @severity = 0
     @max_layer = 0
+    @detected = false
   end
 
   def add_scanner(data)
@@ -22,10 +25,9 @@ class Firewall
   end
 
   def tick
-    puts "TICK:"
     @scanners.each do |scanner|
       if @position == scanner.layer && scanner.position == 0
-        puts ">> Detected at layer #{scanner.layer}"
+        @detected = true
         @severity += scanner.severity
       end
       scanner.scan
@@ -33,39 +35,29 @@ class Firewall
   end
 
   def reset_scanners
-    puts "RESET:"
     @scanners.each do |scanner|
       scanner.reset
-      puts " >>> Scanner #{scanner.layer} at position #{scanner.position}"
     end
   end
 
   def passage_severity(start_at)
     delay = start_at
     
-    puts("If we start after #{start_at} picoseconds:")
     @severity = 0
     @position = -1
+    @detected = false
     reset_scanners
-    # exit 3
+
     while delay > 0
       delay -= 1
-      puts "WAIT #{delay}"
       tick
     end
     
     @position = 0
     while @position <= @max_layer
-      puts "\nCurrent position: layer #{@position}"
       tick
-      puts "Crossing FW @ #{@position}: total severity #{@severity}"
       @position += 1
     end
-
-    if start_at == 12
-      exit 2
-    end
-    puts(" - Severity of passage is #{@severity}")
     return @severity
   end
 
@@ -81,7 +73,6 @@ class Scanner
     @position = 0
     @maxpos = (range-1)*2
     @severity = layer*range
-    # puts "New scanner: layer #{@layer}, severity #{@severity}"
   end
 
   def reset
@@ -89,7 +80,6 @@ class Scanner
   end
 
   def scan
-    puts " > Scanner #{layer} at position #{@position}/#{@maxpos-1}"
     @position += 1
     if @position == @maxpos
       @position = 0
@@ -98,9 +88,12 @@ class Scanner
 
 end
 
-def safe_passage_delay(fw)
-  delay = 1
-  while fw.passage_severity(delay) > 0
+def safe_passage_delay(fw, start_at = 1)
+  delay = start_at
+  while fw.passage_severity(delay) > 0 || fw.detected
+    if delay % 1000 == 0 
+      puts "Delay #{delay} -> detected: #{fw.detected}"
+    end
     delay += 1
   end
   return delay
@@ -114,11 +107,9 @@ test_firewall = Firewall.new
 test_input.each do |scanner|
   test_firewall.add_scanner(scanner)
 end
-# tests.test("test data solution", 24, test_firewall.passage_severity(0))
-tests.test("test data solution", 10, safe_passage_delay(test_firewall))
+tests.test("test data solution", 24, test_firewall.passage_severity(0))
+tests.test("delay before detect", 10, safe_passage_delay(test_firewall))
 tests.bail_on_fail
-
-exit(1)
 puts "All tests passed!\n---"
 
 input = Read::strings("input_data.txt")
@@ -126,5 +117,5 @@ firewall = Firewall.new
 input.each do |scanner|
   firewall.add_scanner(scanner)
 end
-puts "Solution: #{firewall.passage_severity(0)}"
-# puts "Solution: #{safe_passage_delay(firewall)}"
+puts "Solution 1: #{firewall.passage_severity(0)}"
+puts "Solution 2: #{safe_passage_delay(firewall, 60000)}"
