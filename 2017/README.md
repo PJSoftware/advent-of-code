@@ -19,3 +19,4 @@
 - [Day 10](./10/README-10.md) - Knot Hash
 - [Day 11](./11/README-11.md) - Hex Ed
 - [Day 12](./12/README-12.md) - Digital Plumber
+- [Day 13](./13/README-13.md) - Packet Scanners
