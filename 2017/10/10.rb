@@ -1,8 +1,8 @@
 require_relative "../lib/advent/read"
 require_relative "../lib/advent/test"
 
-require_relative "knot_hash_simple"
-require_relative "knot_hash_complex"
+require_relative "../lib/knot_hash_simple"
+require_relative "../lib/knot_hash"
 
 def solve(input)
   return input.length
@@ -24,9 +24,9 @@ test_data = {
 }
 
 test_data.each do |input, hash|
-  test_knot_c = KnotHashC.new(input)
-  test_knot_c.tie
-  tests.test("test complex solution '#{input}'", hash, test_knot_c.checksum)
+  test_knot = KnotHash.new(input)
+  test_knot.tie
+  tests.test("test complex solution '#{input}'", hash, test_knot.checksum)
 end
 
 tests.bail_on_fail()
@@ -38,6 +38,6 @@ knot_s = KnotHashS.new(256, input)
 knot_s.tie
 puts "Simple Solution: #{knot_s.checksum}"
 
-knot_c = KnotHashC.new(input)
-knot_c.tie
-puts "Complex Solution: #{knot_c.checksum}"
+knot = KnotHash.new(input)
+knot.tie
+puts "Complex Solution: #{knot.checksum}"
