@@ -80,7 +80,7 @@ Before you're ready to help them, you need to make sure your information is corr
 - This is the point at which I started to rethink my life choices, specifically the choice to use **Rust**.
   - Rust is focussed on generating "safe" code -- but "safe" specifically means its data is not corruptible. It does not mean our code is less likely to crash.
   - So ... is it a language I really need? It seems to require jumping through way too many hoops just to achieve something that would be simple in other languages.
-- Ultimately I opted to switch to [Ruby](../../doc/languages/Ruby.md) because **Part Two** just proved to be too difficult (and too _painful_) to implement in Rust. Our Rust implementation of PArt One can be found [here](./attempt-in-rust/), but we shall rewrite it in Ruby and proceed from there!
+- Ultimately I opted to switch to [Ruby](../../doc/languages/Ruby.md) because **Part Two** just proved to be too difficult (and too _painful_) to implement in Rust. My Rust implementation of Part One can be found [here](./attempt-in-rust/), but I shall rewrite it in Ruby and proceed from there!
 
 ## Part Two
 
