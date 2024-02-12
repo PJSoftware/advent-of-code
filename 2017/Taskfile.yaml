@@ -98,3 +98,8 @@ tasks:
     cmds:
       - task: slow
       - ruby 13.rb
+
+  14:
+    dir: ./2017/14
+    cmds:
+      - ruby 14.rb

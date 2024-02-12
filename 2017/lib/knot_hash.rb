@@ -1,4 +1,4 @@
-class KnotHashC
+class KnotHash
 
   def initialize(length_prefix)
     @skip = 0
