@@ -47,35 +47,39 @@ class Grid
   end
   
   def flood_fill
-    used = "1"
-    empty = "0"
+    total = 0
     for i in 0..127 do
       for j in 0..127 do
-        if @grid[i][j] == used
+        if @grid[i][j] == "1"
           @regions += 1
-          fill(i,j,used,"#")
-        elsif @grid[i][j] == empty
+          size = fill(i,j)
+          # puts("Region ##{@regions} has #{size} cells")
+          total += size
+        elsif @grid[i][j] == "0"
           @grid[i][j] = " "
         end
       end
       # puts @grid[i].join()
     end
+    puts "Total used cells: #{total}"
   end
 
-  def fill(i,j,old_ch,new_ch)
-    if i < 0 || i > 127
-      return
+  def fill(i,j)
+    @grid[i][j] = "X"
+    size = 1
+    if i > 0 && @grid[i-1][j] == "1"
+      size += fill(i-1,j)
     end
-    if i < 0 || i > 127
-      return
+    if j > 0 && @grid[i][j-1] == "1"
+      size += fill(i,j-1)
     end
-    if @grid[i][j] == old_ch
-      @grid[i][j] = new_ch
-      fill(i-1,j,old_ch,"@")
-      fill(i+1,j,old_ch,"@")
-      fill(i,j-1,old_ch,"@")
-      fill(i,j+1,old_ch,"@")
+    if i < 127 && @grid[i+1][j] == "1"
+      size += fill(i+1,j)
     end
+    if j < 127 && @grid[i][j+1] == "1"
+      size += fill(i,j+1)
+    end
+    return size
   end
 
 end
