@@ -103,3 +103,12 @@ tasks:
     dir: ./2017/14
     cmds:
       - ruby 14.rb
+
+  15_1:
+    dir: ./2017/15
+    cmds:
+      - ruby 15-1.rb
+  15_2:
+    dir: ./2017/15
+    cmds:
+      - ruby 15-2.rb
