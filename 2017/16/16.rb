@@ -71,5 +71,14 @@ puts "All tests passed!\n---"
 
 input = Read::string("input_data.txt")
 steps = input.split(',',-1)
-final_lineup = dance('abcdefghijklmnop', steps)
-puts "Lineup After Dance: #{final_lineup}"
+puts("Dance has #{steps.length} steps")
+num_dances = 0
+total_dances = 1000000000
+lineup = 'abcdefghijklmnop'
+while num_dances < total_dances
+  lineup = dance(lineup, steps)
+  num_dances += 1
+  if num_dances == 1 || num_dances%1000 == 0
+    puts("lineup after #{num_dances} dances: #{lineup}")
+  end
+end
