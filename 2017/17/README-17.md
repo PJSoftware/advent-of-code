@@ -34,3 +34,21 @@ Eventually, after 2017 insertions, the section of the circular buffer near the l
 Perhaps, if you can identify the value that will ultimately be after the last value written (2017), you can short-circuit the spinlock. In this example, that would be 638.
 
 What is the value after 2017 in your completed circular buffer?
+
+## Part Two
+
+The spinlock does not short-circuit. Instead, it gets more angry. At least, you assume that's what happened; it's spinning significantly faster than it was a moment ago.
+
+You have good news and bad news.
+
+The good news is that you have improved calculations for how to stop the spinlock. They indicate that you actually need to identify the value after 0 in the current state of the circular buffer.
+
+The bad news is that while you were determining this, the spinlock has just finished inserting its fifty millionth value (50000000).
+
+What is the value after 0 the moment 50000000 is inserted?
+
+### Comment
+
+Again, running our first version 50000000 times was going to tak a long time -- and require 50Mb of RAM (give or take!)
+
+Instead we came up with a bufferless option which did not need to do any array insertions; it simply tracked the value when something would have been inserted directly after the zero. (It was also going to track the position of the zero, until I realised that nothing would ever be inserted BEFORE the zero...)
