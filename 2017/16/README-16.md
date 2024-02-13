@@ -35,3 +35,25 @@ In the example above, their second dance would begin with the order baedc, and u
 - pe/b, swapping programs e and b: ceadb.
 
 In what order are the programs standing after their billion dances?
+
+### Comment
+
+In my git commit message I said:
+
+> brute force method is not going to work
+>
+> our initial dance has 10000 steps. It takes roughly 4 seconds to process 1000
+> iterations, so 1 billion iterations would take around 1100 hours to process.
+> Ain't nobody got time for that.
+>
+> I'm thinking if we analyse the output after 1000 steps, and generate the
+> simplest possible dance that would generate that from the input, we'll then
+> have a, say, 100 step dance that, when run 1 million times, should take just a
+> few seconds to complete. We can test it on the output after 200o steps, 3000
+> steps, etc...
+
+Which sounded like a good idea at the time, I guess. Or I could just notice that, like all good dances, we eventually end up back where we started. After 3000 dances, the lineup returns to its original position. Let us, instead:
+
+- test to see the minimum number of dances required to return to our original lineup
+- divide our 1000000000 dances by that to get a remainder
+- our remainder is the number of times we actually need to run our dance

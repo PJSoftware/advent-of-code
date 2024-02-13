@@ -73,12 +73,25 @@ input = Read::string("input_data.txt")
 steps = input.split(',',-1)
 puts("Dance has #{steps.length} steps")
 num_dances = 0
-total_dances = 1000000000
-lineup = 'abcdefghijklmnop'
-while num_dances < total_dances
+starting_lineup = 'abcdefghijklmnop'
+lineup = starting_lineup
+loop do
   lineup = dance(lineup, steps)
   num_dances += 1
-  if num_dances == 1 || num_dances%1000 == 0
-    puts("lineup after #{num_dances} dances: #{lineup}")
+  if lineup == starting_lineup
+    puts("we return to starting position after #{num_dances} dances")
+    break
   end
 end
+
+total_dances = 1000000000
+must_dance = total_dances % num_dances
+puts("we must run #{must_dance} dances!")
+num_dances = 0
+lineup = starting_lineup
+while num_dances < must_dance
+  lineup = dance(lineup, steps)
+  num_dances += 1
+end
+
+puts("final position after #{total_dances} (or #{must_dance}) dances would be #{lineup}")
