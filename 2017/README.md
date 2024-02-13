@@ -24,3 +24,4 @@
 - [Day 15](./15/README-15.md) - Duelling Generators
 - [Day 16](./16/README-16.md) - Permutation Promenade
 - [Day 17](./17/README-17.md) - Spinlock
+- [Day 18](./18/README-18.md) - Duet
