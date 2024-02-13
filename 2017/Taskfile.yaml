@@ -112,3 +112,8 @@ tasks:
     dir: ./2017/15
     cmds:
       - ruby 15-2.rb
+
+  16:
+    dir: ./2017/16
+    cmds:
+      - ruby 16.rb

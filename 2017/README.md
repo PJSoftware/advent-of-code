@@ -22,3 +22,4 @@
 - [Day 13](./13/README-13.md) - Packet Scanners
 - [Day 14](./14/README-14.md) - Disk Defragmentation
 - [Day 15](./15/README-15.md) - Duelling Generators
+- [Day 16](./16/README-16.md) - Permutation Promenade
