@@ -24,6 +24,10 @@ class Particle
     return coord_str[0].to_i, coord_str[1].to_i, coord_str[2].to_i
   end
 
+  def location
+    return @pos.x.to_s + ":" + @pos.y.to_s + ":" + @pos.z.to_s
+  end
+
   def tick
     @vel.x += @accel.x
     @vel.y += @accel.y
@@ -48,6 +52,7 @@ class Swarm
   def initialize(data)
     @particles = Array.new
     @all_moving_away = false
+    @can_collide = false
 
     p_num = 0
     for p_data in data
@@ -67,10 +72,16 @@ class Swarm
     @slowacc = 0
     @all_moving_away = true
 
+    space = Hash.new
     for p in @particles
       old_dist = p.dist
       p.tick
       dist = p.distance
+      if space.key?(p.location)
+        space[p.location].push(p.num)
+      else
+        space[p.location] = Array(p.num)
+      end
 
       if dist <= old_dist
         @all_moving_away = false
@@ -93,6 +104,33 @@ class Swarm
         @min_acc = acc
       end
     end
+
+    if @can_collide
+      delete = Array.new
+      space.each do | location, particles |
+        if particles.length > 1
+          for part in particles
+            delete.push(part)
+          end
+        end
+      end
+      if delete.length > 0
+        # puts "Deleting #{delete}"
+        remain = Array.new
+        for p in @particles
+          if !delete.include? p.num
+            remain.push(p)
+          end
+        end
+        @particles = remain
+      end
+    end
+  end
+
+  def remaining
+    @can_collide = true
+    closest
+    return @particles.length
   end
 
   def closest
@@ -101,7 +139,7 @@ class Swarm
 
     loop do
       tick
-      puts "Slowest: #{@slowest}(#{@min_vel}) -- Nearest: #{@nearest}(#{@min_dist}) -- Accel: #{@slowacc}(#{@min_acc}) -- #{@all_moving_away}"
+      # puts "Slowest: #{@slowest}(#{@min_vel}) -- Nearest: #{@nearest}(#{@min_dist}) -- Accel: #{@slowacc}(#{@min_acc}) -- #{@all_moving_away}"
       if @all_moving_away && @slowest == @nearest && @slowacc == @slowest
         break
       end
