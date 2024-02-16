@@ -3,9 +3,9 @@ Vec3 = Struct.new(:x, :y, :z)
 class Particle
   attr_reader :num, :dist, :acceleration
 
-  @@count = 0
+  def initialize(p_num, p_str, v_str, a_str)
+    @num = p_num
 
-  def initialize(p_str, v_str, a_str)
     x,y,z = parse(p_str)
     @pos = Vec3.new(x,y,z)
     
@@ -15,11 +15,8 @@ class Particle
     x,y,z = parse(a_str)
     @accel = Vec3.new(x,y,z)
 
-    @num = @@count
-    @@count += 1
-
-    @dist = 0
     @acceleration = @accel.x.abs + @accel.y.abs + @accel.z.abs
+    distance
   end
 
   def parse(str)
@@ -52,10 +49,12 @@ class Swarm
     @particles = Array.new
     @all_moving_away = false
 
+    p_num = 0
     for p_data in data
       p = /p=<(.+)>, v=<(.+)>, a=<(.+)>/.match(p_data)
-      particle = Particle.new(p[1],p[2],p[3])
+      particle = Particle.new(p_num, p[1],p[2],p[3])
       @particles.push(particle)
+      p_num += 1
     end
   end
 
@@ -66,14 +65,15 @@ class Swarm
     @slowest = 0
     @min_acc = -1
     @slowacc = 0
+    @all_moving_away = true
 
-    mc = 0
     for p in @particles
       old_dist = p.dist
       p.tick
       dist = p.distance
-      if dist > old_dist
-        mc += 1
+
+      if dist <= old_dist
+        @all_moving_away = false
       end
 
       if @min_dist == -1 || dist < @min_dist
@@ -93,9 +93,6 @@ class Swarm
         @min_acc = acc
       end
     end
-    if mc == @particles.length
-      @all_moving_away = true
-    end
   end
 
   def closest
@@ -104,7 +101,7 @@ class Swarm
 
     loop do
       tick
-      # puts "Slowest: #{@slowest}(#{@min_vel}) -- Nearest: #{@nearest}(#{@min_dist}) -- Accel: #{@slowacc}(#{@min_acc}) -- #{@all_moving_away}"
+      puts "Slowest: #{@slowest}(#{@min_vel}) -- Nearest: #{@nearest}(#{@min_dist}) -- Accel: #{@slowacc}(#{@min_acc}) -- #{@all_moving_away}"
       if @all_moving_away && @slowest == @nearest && @slowacc == @slowest
         break
       end
