@@ -127,3 +127,8 @@ tasks:
     dir: ./2017/18
     cmds:
       - ruby 18.rb
+
+  19:
+    dir: ./2017/19
+    cmds:
+      - ruby 19.rb
