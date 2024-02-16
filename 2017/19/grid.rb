@@ -1,4 +1,6 @@
 class Grid
+  attr_reader :moves
+
   # Directions are [delta_row, delta_col]
   @@up    = [-1,0]
   @@down  =  [1,0]
@@ -30,6 +32,7 @@ class Grid
         @col = col
         @dir = @@down
         @path = ""
+        @moves = 0
         break
       end
     end
@@ -90,6 +93,8 @@ class Grid
 
     @row = row
     @col = col
+    @moves += 1
+
     return @grid[@row][@col] != ' '
   end
 
