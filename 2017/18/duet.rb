@@ -14,56 +14,31 @@ class Duet
   
   def initialize(prog)
     @prog0 = Program.new(prog,0)
-    @queue0 = Array.new
-    
     @prog1 = Program.new(prog,1)
-    @queue1 = Array.new
   end
   
   def start
-    v0 = @prog0.start
-    if !@prog0.waiting
-      @queue0.push(v0)
-    end
-    v1 = @prog1.start
-    if !@prog1.waiting
-      @queue1.push(v1)
-    end
+    @prog0.start
+    @prog1.start
 
     loop do
-
-      if @prog0.waiting
-        if @queue1.length > 0
-          v1 = @queue1.shift
-          v0 = @prog0.send(v1)
-          if !@prog0.waiting
-            @queue0.push(v0)
-          end
-        end
-      elsif !@prog0.exit
-        v0 = @prog0.resume()
-        if !@prog0.waiting
-          @queue0.push(v0)
-        end
+      while @prog0.output.length > 0 
+        v = @prog0.output.shift
+        # puts ">> Transfer #{v} from prog0 output to prog1 input"
+        @prog1.input.push(v)
+      end
+      while @prog1.output.length > 0 
+        v = @prog1.output.shift
+        # puts ">> Transfer #{v} from prog1 output to prog0 input"
+        @prog0.input.push(v)
       end
 
-      if @prog1.waiting
-        if @queue0.length > 0
-          v0 = @queue0.shift
-          v1 = @prog1.send(v0)
-          if !@prog1.waiting
-            @queue1.push(v1)
-          end
-        end
-      elsif !@prog1.exit
-        v1 = @prog1.resume()
-        if !@prog1.waiting
-          @queue1.push(v1)
-        end
+      if @prog0.input.length == 0 && @prog1.input.length == 0
+        break
       end
 
-      puts("> #{@queue0.length} #{@queue1.length} #{@prog0.done} #{@prog1.done}")
-      break if @prog0.done && @prog1.done && @queue1.length == 0
+      @prog0.resume
+      @prog1.resume
     end
 
     return @prog1.send_count
@@ -73,6 +48,7 @@ end
 
 class Program
   attr_reader :waiting, :send_count, :exit
+  attr_accessor :input, :output
 
   def initialize(prog,id)
     @send_count = 0
@@ -81,21 +57,21 @@ class Program
     @index = 0
     @register = Hash.new
     @waiting = false
-    @waiting_for_reg = ''
+    @reg_pending = ''
 
+    @id = id
     @register['p'] = id
+
+    @output = Array.new
+    @input = Array.new
   end
 
   def start
-    return run(false,0)
+    return run(false)
   end
 
-  def resume()
-    return run(false,0)
-  end
-
-  def send(val)
-    return run(true,val)
+  def resume
+    return run(true)
   end
 
   def done
@@ -104,10 +80,13 @@ class Program
 
   # private
 
-  def run(resume, val)
+  def run(resume)
     if resume && @waiting
-      @register[@waiting_for_reg] = val
-      @waiting = false
+      # puts "Prog #{@id}: resuming, reading reg '#{@reg_pending}'"
+      if !receive(@reg_pending)
+        # puts "Prog #{@id}: input queue STILL empty; waiting for reg '#{@reg_pending}'"
+        return
+      end
     end
 
     loop do
@@ -135,9 +114,12 @@ class Program
         jump_gz(param[0],param[1])
 
       when 'snd'
-        return send(param[0])
+        send(param[0])
       when 'rcv'
-        return receive(param[0])
+        if !receive(param[0])
+          # puts "Prog #{@id}: input queue empty; waiting for reg '#{param[0]}'"
+          return
+        end
       
       else
         puts("command '#{line}' not recognised: CRASH!")
@@ -180,15 +162,25 @@ class Program
   end
   
   def send(val)
-    @waiting = false
     @send_count += 1
-    return value(val)
+    v = value(val)
+    # puts "Prog #{@id} sending value: #{v}"
+    @output.push(v)
   end
   
   def receive(reg)
-    @waiting_for_reg = reg
-    @waiting = true
-    return 0
+    # puts "Prog #{@id} trying to receive into reg #{reg}"
+    if @input.length > 0
+      val = @input.shift
+      # puts "- shift #{val} from input"
+      @register[reg] = val
+      return true
+    else
+      @reg_pending = reg
+      @waiting = true
+      # puts "- input queue empty; program pausing"
+      return false
+    end
   end
 
   def value(val)
