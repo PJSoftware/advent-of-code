@@ -28,12 +28,12 @@ tasks:
       - perl ./bin/commit.pl
 
   part1:
-    desc: Commit part 1 solution; must specify answer (task commit1 -- ANSWER)
+    desc: Commit part 1 solution; must specify answer (task part1 -- ANSWER)
     cmds:
       - perl ./bin/commit.pl 1 {{.CLI_ARGS}}
 
   part2:
-    desc: Commit part 2 solution; must specify answer (task commit2 -- ANSWER)
+    desc: Commit part 2 solution; must specify answer (task part2 -- ANSWER)
     cmds:
       - perl ./bin/commit.pl 2 {{.CLI_ARGS}}
 
