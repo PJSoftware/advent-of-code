@@ -132,3 +132,8 @@ tasks:
     dir: ./2017/19
     cmds:
       - ruby 19.rb
+
+  20:
+    dir: ./2017/20
+    cmds:
+      - ruby 20.rb
